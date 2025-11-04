@@ -16,12 +16,15 @@ export default function SubcategoryPage() {
   const [category, setCategory] = useState(null)
   const [subcategory, setSubcategory] = useState(null)
   const [courses, setCourses] = useState([])
-  const [enrollments, setEnrollments] = useState([])
+  const [paymentStatusMap, setPaymentStatusMap] = useState({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchData()
-  }, [subcategoryId])
+    if (currentUser) {
+      fetchPaymentStatus()
+    }
+  }, [subcategoryId, currentUser])
 
   const fetchData = async () => {
     try {
@@ -50,20 +53,40 @@ export default function SubcategoryPage() {
         }
         
         setCourses(coursesData)
-        
-        if (currentUser) {
-          const enrollmentsQuery = query(
-            collection(db, "enrollments"),
-            where("userId", "==", currentUser.uid)
-          )
-          const enrollmentsSnapshot = await getDocs(enrollmentsQuery)
-          setEnrollments(enrollmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-        }
       }
     } catch (error) {
       console.error("Error fetching subcategory data:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchPaymentStatus = async () => {
+    if (!currentUser) return
+    
+    try {
+      const paymentsQuery = query(
+        collection(db, "payments"),
+        where("userId", "==", currentUser.uid)
+      )
+      const paymentsSnapshot = await getDocs(paymentsQuery)
+
+      const statusMap = {}
+      
+      paymentsSnapshot.docs.forEach((doc) => {
+        const payment = doc.data()
+        payment.courses?.forEach((course) => {
+          if (payment.status === "pending" && !statusMap[course.id]) {
+            statusMap[course.id] = "pending"
+          } else if (payment.status === "approved") {
+            statusMap[course.id] = "approved"
+          }
+        })
+      })
+
+      setPaymentStatusMap(statusMap)
+    } catch (error) {
+      console.error("Error fetching payment status:", error)
     }
   }
 
@@ -133,19 +156,16 @@ export default function SubcategoryPage() {
           <div>
             <h2 className="text-2xl font-bold mb-6">Courses</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course, index) => {
-                const enrollment = enrollments.find(e => e.courseId === course.id)
-                return (
-                  <motion.div
-                    key={course.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <CourseCard course={course} paymentStatus={enrollment?.paymentStatus} />
-                  </motion.div>
-                )
-              })}
+              {courses.map((course, index) => (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <CourseCard course={course} paymentStatus={paymentStatusMap[course.id]} showButton={true} />
+                </motion.div>
+              ))}
             </div>
           </div>
         ) : (

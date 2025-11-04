@@ -11,15 +11,19 @@ import { useAuth } from "../contexts/AuthContext"
 
 export default function Home() {
   const navigate = useNavigate()
-  const { isAdmin } = useAuth()
+  const { isAdmin, currentUser } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
   const [trendingCourses, setTrendingCourses] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [paymentStatusMap, setPaymentStatusMap] = useState({})
 
   useEffect(() => {
     fetchData()
-  }, [isAdmin])
+    if (currentUser) {
+      fetchPaymentStatus()
+    }
+  }, [isAdmin, currentUser])
 
   const fetchData = async () => {
     try {
@@ -71,6 +75,35 @@ export default function Home() {
 
   const handleCategoryClick = (category) => {
     navigate(`/category/${category.id}`)
+  }
+
+  const fetchPaymentStatus = async () => {
+    if (!currentUser) return
+    
+    try {
+      const paymentsQuery = query(
+        collection(db, "payments"),
+        where("userId", "==", currentUser.uid)
+      )
+      const paymentsSnapshot = await getDocs(paymentsQuery)
+
+      const statusMap = {}
+      
+      paymentsSnapshot.docs.forEach((doc) => {
+        const payment = doc.data()
+        payment.courses?.forEach((course) => {
+          if (payment.status === "pending" && !statusMap[course.id]) {
+            statusMap[course.id] = "pending"
+          } else if (payment.status === "approved") {
+            statusMap[course.id] = "approved"
+          }
+        })
+      })
+
+      setPaymentStatusMap(statusMap)
+    } catch (error) {
+      console.error("Error fetching payment status:", error)
+    }
   }
 
   return (
@@ -184,7 +217,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <CourseCard course={course} />
+                  <CourseCard course={course} paymentStatus={paymentStatusMap[course.id]} showButton={true} />
                 </motion.div>
               ))}
             </div>

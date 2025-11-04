@@ -1,13 +1,24 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { AlertCircle, Check, ShoppingCart, Send } from "lucide-react"
+import { useAuth } from "../contexts/AuthContext"
 
 export default function CourseCard({ course, paymentStatus, showButton = false }) {
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
   const hasPendingPayment = paymentStatus === "pending"
   const hasAccess = paymentStatus === "approved"
+  const [hasClickedTelegram, setHasClickedTelegram] = useState(false)
+
+  useEffect(() => {
+    if (hasAccess && currentUser && course.id) {
+      const clickedLinks = JSON.parse(localStorage.getItem(`telegram_clicks_${currentUser.uid}`) || '{}')
+      setHasClickedTelegram(!!clickedLinks[course.id])
+    }
+  }, [hasAccess, currentUser, course.id])
 
   const handleButtonClick = (e) => {
     e.preventDefault()
@@ -33,7 +44,7 @@ export default function CourseCard({ course, paymentStatus, showButton = false }
     e.preventDefault()
     e.stopPropagation()
     
-    if (!course.telegramLink) return
+    if (!course.telegramLink || !currentUser || hasClickedTelegram) return
     
     let telegramAppUrl
     const link = course.telegramLink
@@ -41,9 +52,9 @@ export default function CourseCard({ course, paymentStatus, showButton = false }
     if (link.includes('joinchat/') || link.includes('+')) {
       let inviteCode = link
       if (inviteCode.includes('joinchat/')) {
-        inviteCode = inviteCode.split('joinchat/')[1]
+        inviteCode = inviteCode.split('joinchat/')[1].split('?')[0]
       } else if (inviteCode.includes('+')) {
-        inviteCode = inviteCode.split('+')[1]
+        inviteCode = inviteCode.split('+')[1].split('?')[0]
       }
       telegramAppUrl = `tg://join?invite=${inviteCode}`
     } else if (link.includes('t.me/')) {
@@ -54,6 +65,13 @@ export default function CourseCard({ course, paymentStatus, showButton = false }
     }
     
     window.location.href = telegramAppUrl
+    
+    setTimeout(() => {
+      const clickedLinks = JSON.parse(localStorage.getItem(`telegram_clicks_${currentUser.uid}`) || '{}')
+      clickedLinks[course.id] = true
+      localStorage.setItem(`telegram_clicks_${currentUser.uid}`, JSON.stringify(clickedLinks))
+      setHasClickedTelegram(true)
+    }, 500)
   }
 
   return (
@@ -126,10 +144,24 @@ export default function CourseCard({ course, paymentStatus, showButton = false }
               {hasAccess && course.telegramLink ? (
                 <button
                   onClick={handleTelegramClick}
-                  className="w-full py-2.5 rounded-md bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-xs font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
+                  disabled={hasClickedTelegram}
+                  className={`w-full py-2.5 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-all ${
+                    hasClickedTelegram
+                      ? 'bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-sm hover:shadow-md'
+                  }`}
                 >
-                  <Send className="w-4 h-4" />
-                  Join Telegram Group
+                  {hasClickedTelegram ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Joined Telegram Group
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Join Telegram Group
+                    </>
+                  )}
                 </button>
               ) : hasPendingPayment ? (
                 <button
