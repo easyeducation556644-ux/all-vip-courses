@@ -48,15 +48,19 @@ export default function Home() {
 
       const categoriesQuery = query(
         collection(db, "categories"), 
-        where("showOnHomepage", "==", true),
-        orderBy("order", "asc"),
-        limit(8)
+        where("showOnHomepage", "==", true)
       )
       const categoriesSnapshot = await getDocs(categoriesQuery)
-      const categoriesData = categoriesSnapshot.docs.map((doc) => ({
+      let categoriesData = categoriesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }))
+      
+      categoriesData = categoriesData
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+        .slice(0, 8)
+      
+      console.log("Categories loaded:", categoriesData.length)
       setCategories(categoriesData)
     } catch (error) {
       console.error(" Error fetching data:", error)
@@ -91,15 +95,21 @@ export default function Home() {
       
       paymentsSnapshot.docs.forEach((doc) => {
         const payment = doc.data()
-        payment.courses?.forEach((course) => {
-          if (payment.status === "pending" && !statusMap[course.id]) {
-            statusMap[course.id] = "pending"
-          } else if (payment.status === "approved") {
-            statusMap[course.id] = "approved"
-          }
-        })
+        console.log("Payment data:", payment)
+        
+        if (payment.courses && Array.isArray(payment.courses)) {
+          payment.courses.forEach((course) => {
+            console.log(`Course ${course.id} - Payment status: ${payment.status}`)
+            if (payment.status === "pending" && !statusMap[course.id]) {
+              statusMap[course.id] = "pending"
+            } else if (payment.status === "approved") {
+              statusMap[course.id] = "approved"
+            }
+          })
+        }
       })
 
+      console.log("Final payment status map:", statusMap)
       setPaymentStatusMap(statusMap)
     } catch (error) {
       console.error("Error fetching payment status:", error)

@@ -121,15 +121,21 @@ export default function Courses() {
       
       paymentsSnapshot.docs.forEach((doc) => {
         const payment = doc.data()
-        payment.courses?.forEach((course) => {
-          if (payment.status === "pending" && !statusMap[course.id]) {
-            statusMap[course.id] = "pending"
-          } else if (payment.status === "approved") {
-            statusMap[course.id] = "approved"
-          }
-        })
+        console.log("[Courses] Payment data:", payment)
+        
+        if (payment.courses && Array.isArray(payment.courses)) {
+          payment.courses.forEach((course) => {
+            console.log(`[Courses] Course ${course.id} - Payment status: ${payment.status}`)
+            if (payment.status === "pending" && !statusMap[course.id]) {
+              statusMap[course.id] = "pending"
+            } else if (payment.status === "approved") {
+              statusMap[course.id] = "approved"
+            }
+          })
+        }
       })
 
+      console.log("[Courses] Final payment status map:", statusMap)
       setPaymentStatusMap(statusMap)
     } catch (error) {
       console.error("Error fetching payment status:", error)

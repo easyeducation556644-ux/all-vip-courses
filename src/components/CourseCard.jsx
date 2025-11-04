@@ -14,6 +14,17 @@ export default function CourseCard({ course, paymentStatus, showButton = false }
   const [hasClickedTelegram, setHasClickedTelegram] = useState(false)
 
   useEffect(() => {
+    if (showButton && currentUser) {
+      console.log(`CourseCard [${course.title}]:`, {
+        courseId: course.id,
+        paymentStatus,
+        hasPendingPayment,
+        hasAccess
+      })
+    }
+  }, [course.id, paymentStatus, showButton, currentUser])
+
+  useEffect(() => {
     if (hasAccess && currentUser && course.id) {
       const clickedLinks = JSON.parse(localStorage.getItem(`telegram_clicks_${currentUser.uid}`) || '{}')
       setHasClickedTelegram(!!clickedLinks[course.id])
