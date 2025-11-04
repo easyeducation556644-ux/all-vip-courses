@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { ShoppingCart, ArrowLeft, Phone, Hash, Loader2, CheckCircle2 } from "lucide-react"
 import { useAuth } from "../contexts/AuthContext"
-import { useCart } from "../contexts/CartContext"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "../lib/firebase"
 import { toast } from "../hooks/use-toast"
@@ -13,7 +12,7 @@ import { toast } from "../hooks/use-toast"
 export default function Checkout() {
   const navigate = useNavigate()
   const { currentUser, userProfile } = useAuth()
-  const { cartItems, getTotal, clearCart, isLoaded: isCartLoaded } = useCart()
+  const [cartItems, setCartItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState("")
   const [transactionId, setTransactionId] = useState("")
@@ -33,13 +32,26 @@ export default function Checkout() {
       return
     }
 
-    if (!isCartLoaded) return
-
-    if (cartItems.length === 0) {
+    const tempItem = localStorage.getItem("tempCheckoutItem")
+    if (tempItem) {
+      try {
+        setCartItems(JSON.parse(tempItem))
+      } catch (error) {
+        console.error("Error loading checkout items:", error)
+        navigate("/courses")
+      }
+    } else {
       navigate("/courses")
-      return
     }
-  }, [currentUser, cartItems, navigate, isCartLoaded])
+  }, [currentUser, navigate])
+
+  const getTotal = () => {
+    return cartItems.reduce((total, item) => total + (item.price || 0), 0)
+  }
+
+  const clearCart = () => {
+    localStorage.removeItem("tempCheckoutItem")
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()

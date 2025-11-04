@@ -3,34 +3,25 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { ShoppingCart, Play, BookOpen, Clock, Users, Tag, Check, AlertCircle } from "lucide-react"
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
+import { Play, BookOpen, Clock, Users, Tag, Check, AlertCircle } from "lucide-react"
+import { doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "../lib/firebase"
 import { useAuth } from "../contexts/AuthContext"
-import { useCart } from "../contexts/CartContext"
 import { isFirebaseId } from "../lib/slug"
 
 export default function CourseDetail() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const { currentUser } = useAuth()
-  const { addToCart, cartItems, removeFromCart } = useCart()
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
   const [hasAccess, setHasAccess] = useState(false)
-  const [isInCart, setIsInCart] = useState(false)
   const [hasPendingPayment, setHasPendingPayment] = useState(false)
   const [teachers, setTeachers] = useState([])
 
   useEffect(() => {
     fetchCourseData()
   }, [slug, currentUser])
-
-  useEffect(() => {
-    if (course) {
-      setIsInCart(cartItems.some((item) => item.id === course.id))
-    }
-  }, [cartItems, course])
 
   const fetchCourseData = async () => {
     try {
@@ -101,22 +92,26 @@ export default function CourseDetail() {
     }
   }
 
-  const handleAddToCart = () => {
-    if (course) {
-      addToCart(course)
+  const handleBuyNow = async () => {
+    if (!course) return
+    
+    if (!currentUser) {
+      navigate("/login")
+      return
     }
-  }
 
-  const handleRemoveFromCart = () => {
-    if (course) {
-      removeFromCart(course.id)
-    }
-  }
-
-  const handleBuyNow = () => {
-    if (course) {
-      addToCart(course)
+    try {
+      const tempCartItem = {
+        id: course.id,
+        title: course.title,
+        price: course.price || 0,
+        thumbnailURL: course.thumbnailURL
+      }
+      
+      localStorage.setItem("tempCheckoutItem", JSON.stringify([tempCartItem]))
       navigate("/checkout")
+    } catch (error) {
+      console.error("Error navigating to checkout:", error)
     }
   }
 
@@ -131,8 +126,6 @@ export default function CourseDetail() {
     }
 
     try {
-      const { addDoc, serverTimestamp } = await import("firebase/firestore")
-
       await addDoc(collection(db, "payments"), {
         userId: currentUser.uid,
         userName: currentUser.displayName || "User",
@@ -150,6 +143,15 @@ export default function CourseDetail() {
         status: "approved",
         submittedAt: serverTimestamp(),
         isFreeEnrollment: true,
+      })
+
+      await addDoc(collection(db, "enrollments"), {
+        userId: currentUser.uid,
+        courseId: course.id,
+        status: "APPROVED",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        telegramJoinedAt: null
       })
 
       await fetchCourseData()
@@ -307,15 +309,7 @@ export default function CourseDetail() {
                   </div>
 
                   <div className="space-y-3">
-                    {isInCart ? (
-                      <button
-                        onClick={() => navigate("/checkout")}
-                        className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
-                      >
-                        <Check className="w-5 h-5" />
-                        Go to Checkout
-                      </button>
-                    ) : course.price === 0 || course.price === undefined ? (
+                    {course.price === 0 || course.price === undefined ? (
                       <button
                         onClick={handleEnrollFree}
                         className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
@@ -324,21 +318,12 @@ export default function CourseDetail() {
                         Enroll Free
                       </button>
                     ) : (
-                      <>
-                        <button
-                          onClick={handleBuyNow}
-                          className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors font-medium"
-                        >
-                          Buy Now
-                        </button>
-                        <button
-                          onClick={handleAddToCart}
-                          className="w-full py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
-                        >
-                          <ShoppingCart className="w-5 h-5" />
-                          Add to Cart
-                        </button>
-                      </>
+                      <button
+                        onClick={handleBuyNow}
+                        className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors font-medium"
+                      >
+                        Buy Now
+                      </button>
                     )}
                   </div>
                 </div>

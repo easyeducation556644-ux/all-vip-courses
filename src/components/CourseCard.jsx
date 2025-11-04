@@ -2,8 +2,56 @@
 
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
+import { collection, query, where, getDocs } from "firebase/firestore"
+import { db } from "../lib/firebase"
+import { useAuth } from "../contexts/AuthContext"
+import { AlertCircle, Check } from "lucide-react"
 
 export default function CourseCard({ course }) {
+  const { currentUser } = useAuth()
+  const [hasPendingPayment, setHasPendingPayment] = useState(false)
+  const [hasAccess, setHasAccess] = useState(false)
+
+  useEffect(() => {
+    if (currentUser && course) {
+      checkPaymentStatus()
+    }
+  }, [currentUser, course])
+
+  const checkPaymentStatus = async () => {
+    if (!currentUser || !course) return
+
+    try {
+      const paymentsQuery = query(
+        collection(db, "payments"),
+        where("userId", "==", currentUser.uid)
+      )
+      const paymentsSnapshot = await getDocs(paymentsQuery)
+
+      let foundPending = false
+      let foundApproved = false
+
+      paymentsSnapshot.docs.forEach((doc) => {
+        const payment = doc.data()
+        const hasCourse = payment.courses?.some((c) => c.id === course.id)
+        
+        if (hasCourse) {
+          if (payment.status === "pending") {
+            foundPending = true
+          } else if (payment.status === "approved") {
+            foundApproved = true
+          }
+        }
+      })
+
+      setHasPendingPayment(foundPending)
+      setHasAccess(foundApproved)
+    } catch (error) {
+      console.error("Error checking payment status:", error)
+    }
+  }
+
   return (
     <Link to={`/${course.slug || course.id}`} className="h-full">
       <motion.div
@@ -23,6 +71,20 @@ export default function CourseCard({ course }) {
                 <div className="text-4xl mb-1">📚</div>
                 <p className="text-xs">{course.category}</p>
               </div>
+            </div>
+          )}
+          
+          {hasPendingPayment && (
+            <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              Pending
+            </div>
+          )}
+          
+          {hasAccess && (
+            <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1">
+              <Check className="w-3 h-3" />
+              Enrolled
             </div>
           )}
         </div>

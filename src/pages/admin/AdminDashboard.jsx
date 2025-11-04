@@ -1,44 +1,59 @@
 "use client"
 
 import { Routes, Route, Link, useLocation } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Users,
   BookOpen,
   CreditCard,
-  Send,
   Menu,
   X,
   FolderTree,
-  UserCheck,
+  BarChart3,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { db } from "../../lib/firebase"
 import ManageUsers from "./ManageUsers"
 import ManageCourses from "./ManageCourses"
 import ManagePayments from "./ManagePayments"
-import ManageTelegramSubmissions from "./ManageTelegramSubmissions"
 import ManageCategories from "./ManageCategories"
-import ManageEnrollments from "./ManageEnrollments"
+import Overview from "./Overview"
 
 export default function AdminDashboard() {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [pendingPaymentsCount, setPendingPaymentsCount] = useState(0)
+
+  useEffect(() => {
+    const paymentsQuery = query(
+      collection(db, "payments"),
+      where("status", "==", "pending")
+    )
+    
+    const unsubscribe = onSnapshot(paymentsQuery, (snapshot) => {
+      setPendingPaymentsCount(snapshot.size)
+    }, (error) => {
+      console.error("Error listening to pending payments:", error)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   const navItems = [
+    { name: "Overview", path: "/admin", icon: BarChart3 },
     { name: "Users", path: "/admin/users", icon: Users },
-    { name: "Enrollments", path: "/admin/enrollments", icon: UserCheck },
     { name: "Categories", path: "/admin/categories", icon: FolderTree },
     { name: "Courses", path: "/admin/courses", icon: BookOpen },
-    { name: "Payments", path: "/admin/payments", icon: CreditCard },
-    { name: "Telegram Submissions", path: "/admin/telegram", icon: Send },
+    { name: "Payments", path: "/admin/payments", icon: CreditCard, badge: pendingPaymentsCount },
   ]
 
-  const currentPage = navItems.find((item) => item.path === location.pathname)?.name || "Admin Panel"
+  const currentPage = navItems.find((item) => item.path === location.pathname)?.name || "Overview"
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Desktop Header */}
-      <div className="hidden lg:block border-b border-border bg-card sticky top-0 z-10 shadow-sm">
+      <div className="hidden lg:block border-b border-border bg-card sticky top-[57px] z-40 shadow-sm">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div>
@@ -50,7 +65,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-border sticky top-0 z-10 shadow-sm">
+      <div className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-border sticky top-[57px] z-40 shadow-sm">
         <div>
           <h1 className="text-base font-bold text-foreground">Admin Panel</h1>
           <p className="text-xs text-muted-foreground font-medium">{currentPage}</p>
@@ -74,7 +89,7 @@ export default function AdminDashboard() {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-all duration-200 text-xs ${
+                    className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-all duration-200 text-xs ${
                       isActive
                         ? "bg-primary text-primary-foreground shadow-sm font-medium"
                         : "hover:bg-muted text-foreground hover:text-primary font-normal"
@@ -82,6 +97,11 @@ export default function AdminDashboard() {
                   >
                     <item.icon className="w-4 h-4 flex-shrink-0" />
                     <span>{item.name}</span>
+                    {item.badge > 0 && (
+                      <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 )
               })}
@@ -97,7 +117,7 @@ export default function AdminDashboard() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="lg:hidden fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border shadow-lg overflow-y-auto"
+              className="lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border shadow-lg overflow-y-auto"
             >
               <div className="p-4">
                 <nav className="space-y-1">
@@ -108,7 +128,7 @@ export default function AdminDashboard() {
                         key={item.path}
                         to={item.path}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all text-sm ${
+                        className={`relative flex items-center gap-3 px-3 py-2.5 rounded-md transition-all text-sm ${
                           isActive
                             ? "bg-primary text-primary-foreground shadow-sm font-medium"
                             : "hover:bg-muted text-foreground hover:text-primary font-normal"
@@ -116,6 +136,11 @@ export default function AdminDashboard() {
                       >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
                         <span>{item.name}</span>
+                        {item.badge > 0 && (
+                          <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                            {item.badge}
+                          </span>
+                        )}
                       </Link>
                     )
                   })}
@@ -128,7 +153,7 @@ export default function AdminDashboard() {
         {/* Backdrop */}
         {mobileMenuOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
@@ -137,13 +162,11 @@ export default function AdminDashboard() {
         <div className="flex-1 overflow-y-auto pb-20 lg:pb-0">
           <div className="p-3 sm:p-4 lg:p-4">
             <Routes>
-              <Route index element={<ManageUsers />} />
+              <Route index element={<Overview />} />
               <Route path="users" element={<ManageUsers />} />
-              <Route path="enrollments" element={<ManageEnrollments />} />
               <Route path="categories" element={<ManageCategories />} />
               <Route path="courses" element={<ManageCourses />} />
               <Route path="payments" element={<ManagePayments />} />
-              <Route path="telegram" element={<ManageTelegramSubmissions />} />
             </Routes>
           </div>
         </div>
