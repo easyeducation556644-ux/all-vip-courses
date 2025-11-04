@@ -17,6 +17,15 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState("")
   const [transactionId, setTransactionId] = useState("")
+  const [telegramId, setTelegramId] = useState("")
+  const [telegramLink, setTelegramLink] = useState("")
+  const [customerName, setCustomerName] = useState("")
+  
+  useEffect(() => {
+    if (userProfile?.name || currentUser?.displayName) {
+      setCustomerName(userProfile?.name || currentUser?.displayName || "")
+    }
+  }, [userProfile, currentUser])
 
   useEffect(() => {
     if (!currentUser) {
@@ -35,11 +44,11 @@ export default function Checkout() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    if (!phoneNumber.trim() || !transactionId.trim()) {
+    if (!phoneNumber.trim() || !transactionId.trim() || !customerName.trim() || !telegramId.trim()) {
       toast({
         variant: "destructive",
         title: "Missing Information",
-        description: "Please enter both phone number and transaction ID",
+        description: "Please fill in all required fields",
       })
       return
     }
@@ -52,10 +61,12 @@ export default function Checkout() {
       // Create payment record
       await addDoc(collection(db, "payments"), {
         userId: currentUser.uid,
-        userName: userProfile?.name || currentUser.displayName || "User",
+        userName: customerName.trim(),
         userEmail: userProfile?.email || currentUser.email,
         phoneNumber: phoneNumber.trim(),
         transactionId: transactionId.trim(),
+        telegramId: telegramId.trim(),
+        telegramLink: telegramLink.trim() || "",
         courses: cartItems.map((item) => ({
           id: item.id,
           title: item.title,
@@ -77,7 +88,10 @@ export default function Checkout() {
           paymentInfo: {
             phoneNumber: phoneNumber.trim(),
             transactionId: transactionId.trim(),
-            amount: parseFloat(course.price) || 0
+            amount: parseFloat(course.price) || 0,
+            telegramId: telegramId.trim(),
+            telegramLink: telegramLink.trim() || "",
+            customerName: customerName.trim()
           },
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
@@ -173,6 +187,52 @@ export default function Checkout() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
                     <label className="block text-sm font-medium mb-2">
+                      Your Name
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Enter your name"
+                      required
+                      className="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Telegram ID
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={telegramId}
+                      onChange={(e) => setTelegramId(e.target.value)}
+                      placeholder="@yourtelegramid"
+                      required
+                      className="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Enter your Telegram username
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Telegram Link (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={telegramLink}
+                      onChange={(e) => setTelegramLink(e.target.value)}
+                      placeholder="https://t.me/yourusername"
+                      className="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
                       Your Phone Number
                       <span className="text-red-500 ml-1">*</span>
                     </label>
@@ -214,10 +274,6 @@ export default function Checkout() {
                   </div>
 
                   <div className="bg-muted/50 rounded-lg p-4">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium">Customer Name:</span>
-                      <span className="text-sm">{userProfile?.name || currentUser?.displayName || "User"}</span>
-                    </div>
                     <div className="flex justify-between">
                       <span className="text-sm font-medium">Email:</span>
                       <span className="text-sm">{userProfile?.email || currentUser?.email}</span>

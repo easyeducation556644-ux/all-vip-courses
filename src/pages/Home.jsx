@@ -75,34 +75,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="relative bg-white py-20 md:py-32 lg:py-40 px-4 overflow-hidden">
-        {/* Subtle decorative elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50/30 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-yellow-50/20 rounded-full blur-3xl -z-10"></div>
-
-        <div className="container mx-auto relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-8"
-            >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-900/10 to-yellow-600/10 border border-blue-200/50 rounded-full text-sm font-semibold text-blue-900">
-                <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
-                  Trusted by 10,000+ Students
-                </span>
-              </span>
-            </motion.div>
-
+      <section className="relative bg-background py-16 md:py-24 px-4">
+        <div className="container mx-auto max-w-3xl">
+          <div className="max-w-2xl mx-auto text-center">
             {/* Main Heading */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.6 }}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight text-blue-900"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight text-foreground"
             >
               All Vip Course
             </motion.h1>
@@ -112,73 +93,39 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed"
+              className="text-base md:text-lg text-muted-foreground mb-8 max-w-xl mx-auto"
             >
-              Access premium education from anywhere, anytime. Learn from industry experts and advance your career with
-              world-class courses.
+              Access premium education from anywhere, anytime. Learn from industry experts and advance your career.
             </motion.p>
 
-            {/* CTA Buttons and Search */}
+            {/* CTA Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
+              className="flex flex-col items-center justify-center gap-4"
             >
               <Link
                 to="/courses"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-all font-semibold group shadow-lg"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-all font-medium text-sm"
               >
-                Start Learning
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                Browse Courses
+                <ChevronRight className="w-4 h-4" />
               </Link>
-              <form onSubmit={handleSearch} className="relative w-full sm:w-auto">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search courses..."
-                  className="w-full sm:w-80 pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200 text-base placeholder:text-gray-400 transition-all"
-                />
-              </form>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="flex flex-wrap items-center justify-center gap-8 text-sm text-gray-600"
-            >
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-blue-600" />
-                <span className="font-semibold">1000+ Courses</span>
-              </div>
-              <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-300"></div>
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-blue-600" />
-                <span className="font-semibold">Expert Instructors</span>
-              </div>
-              <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-300"></div>
-              <div className="flex items-center gap-2">
-                <Infinity className="w-4 h-4 text-blue-600" />
-                <span className="font-semibold">Lifetime Access</span>
-              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
       {categories.length > 0 && (
-        <section className="py-16 md:py-20 px-4 bg-gray-50">
-          <div className="container mx-auto max-w-6xl">
-            <div className="mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-2">Browse Categories</h2>
-              <p className="text-gray-600 text-lg">Explore our comprehensive collection of courses</p>
+        <section className="py-12 md:py-16 px-4 bg-muted/30">
+          <div className="container mx-auto max-w-3xl">
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Browse Categories</h2>
+              <p className="text-muted-foreground text-sm">Explore our collection of courses</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {categories.map((category, index) => (
                 <motion.div
                   key={category.id}
@@ -187,25 +134,10 @@ export default function Home() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <button onClick={() => handleCategoryClick(category)} className="w-full text-left group">
-                    <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-blue-600 hover:shadow-xl transition-all duration-300">
-                      <div className="aspect-square bg-gradient-to-br from-blue-100 to-yellow-50 flex items-center justify-center relative overflow-hidden">
-                        {category.imageURL ? (
-                          <img
-                            src={category.imageURL || "/placeholder.svg"}
-                            alt={category.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center p-4 text-center">
-                            <h3 className="font-bold text-lg md:text-xl text-blue-900">{category.title}</h3>
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-4 bg-white">
-                        <h3 className="text-base font-semibold text-blue-900 group-hover:text-blue-600 transition-colors text-center">
-                          {category.title}
-                        </h3>
-                      </div>
+                    <div className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary hover:shadow-sm transition-all p-4">
+                      <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                        {category.title}
+                      </h3>
                     </div>
                   </button>
                 </motion.div>
@@ -215,25 +147,25 @@ export default function Home() {
         </section>
       )}
 
-      <section className="py-16 md:py-20 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-2">Featured Courses</h2>
-            <p className="text-gray-600 text-lg">Start your learning journey with our most popular courses</p>
+      <section className="py-12 md:py-16 px-4 bg-background">
+        <div className="container mx-auto max-w-3xl">
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Featured Courses</h2>
+            <p className="text-muted-foreground text-sm">Start your learning journey</p>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-gray-100 border border-gray-200 rounded-xl p-6 animate-pulse">
-                  <div className="aspect-video bg-gray-200 rounded-lg mb-4"></div>
-                  <div className="h-6 bg-gray-200 rounded mb-3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                <div key={i} className="bg-card border border-border rounded-lg p-4 animate-pulse">
+                  <div className="aspect-video bg-muted rounded-md mb-3"></div>
+                  <div className="h-5 bg-muted rounded mb-2"></div>
+                  <div className="h-4 bg-muted rounded w-2/3"></div>
                 </div>
               ))}
             </div>
           ) : trendingCourses.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               {trendingCourses.map((course, index) => (
                 <motion.div
                   key={course.id}
@@ -246,18 +178,18 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 text-gray-600">
-              <p className="text-lg">No courses available yet. Check back soon!</p>
+            <div className="text-center py-12 text-muted-foreground">
+              <p className="text-sm">No courses available yet. Check back soon!</p>
             </div>
           )}
 
           <div className="text-center">
             <Link
               to="/courses"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all font-semibold group shadow-lg"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-all font-medium text-sm"
             >
               View All Courses
-              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

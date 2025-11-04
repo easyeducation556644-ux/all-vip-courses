@@ -24,7 +24,7 @@ export default function ManageCourses() {
     description: "",
     instructors: [],
     category: "",
-    type: "subject",
+    subcategory: "",
     price: "",
     status: "running",
     publishStatus: "published",
@@ -70,7 +70,7 @@ export default function ManageCourses() {
         description: course.description || "",
         instructors: course.instructors || (course.instructorName ? [course.instructorName] : []),
         category: course.category || "",
-        type: course.type || "subject",
+        subcategory: course.subcategory || "",
         price: course.price || "",
         status: course.status || "running",
         publishStatus: course.publishStatus || "published",
@@ -86,7 +86,7 @@ export default function ManageCourses() {
         description: "",
         instructors: [],
         category: "",
-        type: "subject",
+        subcategory: "",
         price: "",
         status: "running",
         publishStatus: "published",
@@ -132,7 +132,7 @@ export default function ManageCourses() {
         instructors: formData.instructors,
         instructorName: formData.instructors.join(", "),
         category: formData.category,
-        type: formData.type,
+        subcategory: formData.subcategory || "",
         price: Number(formData.price) || 0,
         status: formData.status,
         publishStatus: formData.publishStatus,
@@ -418,48 +418,68 @@ export default function ManageCourses() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Instructors</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-3 bg-muted/30 rounded-lg border border-border max-h-48 overflow-y-auto">
-                    {teachers.length > 0 ? (
-                      teachers.map((teacher) => (
-                        <label
-                          key={teacher.id}
-                          className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 cursor-pointer transition-colors"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.instructors.includes(teacher.name)}
-                            onChange={(e) => {
-                              const newInstructors = e.target.checked
-                                ? [...formData.instructors, teacher.name]
-                                : formData.instructors.filter((name) => name !== teacher.name)
-                              setFormData({ ...formData, instructors: newInstructors })
-                            }}
-                            className="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary"
-                          />
-                          <span className="text-xs truncate">{teacher.name}</span>
-                        </label>
-                      ))
-                    ) : (
-                      <p className="text-xs text-muted-foreground col-span-full text-center py-2">
-                        No teachers available
-                      </p>
-                    )}
-                  </div>
-                  {formData.instructors.length > 0 && (
-                    <p className="text-xs text-muted-foreground mt-1.5">
-                      Selected: {formData.instructors.join(", ")}
-                    </p>
-                  )}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium mb-1.5">Instructors (Add multiple)</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (tagInput.trim() && !formData.instructors.includes(tagInput.trim())) {
+                          setFormData({ ...formData, instructors: [...formData.instructors, tagInput.trim()] })
+                          setTagInput("")
+                        }
+                      }
+                    }}
+                    className="flex-1 px-3 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    placeholder="Type instructor name and press Enter"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (tagInput.trim() && !formData.instructors.includes(tagInput.trim())) {
+                        setFormData({ ...formData, instructors: [...formData.instructors, tagInput.trim()] })
+                        setTagInput("")
+                      }
+                    }}
+                    disabled={!tagInput.trim()}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  >
+                    Add
+                  </button>
                 </div>
+                {formData.instructors.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {formData.instructors.map((instructor, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs rounded-full"
+                      >
+                        {instructor}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, instructors: formData.instructors.filter((_, i) => i !== index) })
+                          }}
+                          className="hover:text-red-500 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Category</label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: "" })}
                     className="w-full px-3 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                   >
                     <option value="">Select category</option>
@@ -472,15 +492,15 @@ export default function ManageCourses() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1.5">Course Type</label>
-                  <select
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  <label className="block text-sm font-medium mb-1.5">Subcategory (Optional)</label>
+                  <input
+                    type="text"
+                    value={formData.subcategory || ""}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                     className="w-full px-3 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                  >
-                    <option value="subject">Subject</option>
-                    <option value="batch">Batch</option>
-                  </select>
+                    placeholder="Enter subcategory"
+                    disabled={!formData.category}
+                  />
                 </div>
 
                 <div>

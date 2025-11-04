@@ -6,6 +6,45 @@ All Vip Course is a web-based online education platform built with React and Fir
 
 The application serves both free and paid educational content, with support for coupon codes, payment processing through RupantorPay (Bangladesh payment gateway), and secure Telegram group access upon enrollment approval.
 
+## Recent Changes (November 2025)
+
+### Design & UX Improvements
+- **Minimal Design Aesthetic**: Redesigned entire platform with cleaner, minimal aesthetic inspired by rj1.dev
+  - Reduced container widths (max-w-4xl to max-w-6xl) for better readability
+  - Simplified header, hero section, and course card designs
+  - Streamlined overall layout with better whitespace
+- **Dark Mode Fix**: Properly implemented ThemeProvider wrapping entire app for consistent theme toggle
+- **Streamlined Checkout**: Removed "Add to Cart" UI elements, kept only "Buy Now" button for direct checkout flow
+  - CartContext maintained for checkout processing
+  - Users click "Buy Now" → goes directly to checkout → payment processing
+  - No visible shopping cart icon or drawer
+
+### Slug-Based Course Routing
+- Implemented slug generation for courses (e.g., /web-development-course)
+- Updated routing to support both slug (/:slug) and legacy ID (/course/:id) patterns
+- Course URLs now use SEO-friendly slugs instead of Firebase IDs
+- Automatic slug generation from course titles with fallback for existing courses
+
+### Telegram Integration Enhancement
+- Added three new fields to checkout process:
+  - **Customer Name**: Editable field (pre-filled from user profile)
+  - **Telegram ID**: Required field for student's Telegram username
+  - **Telegram Link**: Optional field for student's Telegram profile link
+- Telegram data now stored in both payments and enrollments collections
+- Admin enrollment cards display telegram information for easy student contact
+- Enables admin to quickly add students to Telegram groups after approval
+
+### Admin Dashboard Enhancements
+- **Fixed Z-Index Issue**: Corrected header z-index to prevent menu overlay problems
+- **Multiple Instructors Support**: Changed instructor field from checkbox selection to editable tag-based input
+  - Admins can now add custom instructor names directly
+  - Supports multiple instructors per course with tag-style UI
+  - No longer limited to pre-existing teacher list
+- **Subcategory Support**: Added subcategory field to course creation
+  - Appears when category is selected
+  - Optional text input for custom subcategories
+- **Removed Course Type Field**: Eliminated "Subject/Batch" type selector as per requirements
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.

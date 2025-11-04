@@ -11,7 +11,7 @@ import { useCart } from "../contexts/CartContext"
 import { isFirebaseId } from "../lib/slug"
 
 export default function CourseDetail() {
-  const { courseId } = useParams()
+  const { slug } = useParams()
   const navigate = useNavigate()
   const { currentUser } = useAuth()
   const { addToCart, cartItems, removeFromCart } = useCart()
@@ -24,7 +24,7 @@ export default function CourseDetail() {
 
   useEffect(() => {
     fetchCourseData()
-  }, [courseId, currentUser])
+  }, [slug, currentUser])
 
   useEffect(() => {
     if (course) {
@@ -36,13 +36,13 @@ export default function CourseDetail() {
     try {
       let courseData = null
       
-      if (isFirebaseId(courseId)) {
-        const courseDoc = await getDoc(doc(db, "courses", courseId))
+      if (isFirebaseId(slug)) {
+        const courseDoc = await getDoc(doc(db, "courses", slug))
         if (courseDoc.exists()) {
           courseData = { id: courseDoc.id, ...courseDoc.data() }
         }
       } else {
-        const q = query(collection(db, "courses"), where("slug", "==", courseId))
+        const q = query(collection(db, "courses"), where("slug", "==", slug))
         const snapshot = await getDocs(q)
         if (!snapshot.empty) {
           const courseDoc = snapshot.docs[0]

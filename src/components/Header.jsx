@@ -294,121 +294,61 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 dark:bg-black/95 backdrop-blur-xl border-b border-border/50">
-        <nav className="container mx-auto px-4 py-3">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
+        <nav className="container mx-auto max-w-4xl px-4 py-3">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 lg:flex-1">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 hover:bg-primary/10 rounded-lg smooth-transition hover:scale-105 active:scale-95"
+                className="lg:hidden p-1.5 hover:bg-muted rounded-md transition-colors"
                 aria-label="Open menu"
               >
-                <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
+                <Menu className="w-5 h-5 text-foreground" />
               </button>
 
               <Link to="/" className="flex items-center">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-xl sm:text-2xl font-bold dark:text-white"
-                >
+                <div className="text-base sm:text-lg font-semibold text-foreground">
                   Easy Education
-                </motion.div>
+                </div>
               </Link>
             </div>
 
-            <nav className="hidden lg:flex items-center gap-1 justify-center lg:flex-1">
+            <nav className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => {
-                const Icon = link.icon
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/10 transition-colors font-medium text-sm"
+                    className="px-3 py-1.5 rounded-md hover:bg-muted transition-colors text-sm font-medium text-foreground"
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{link.name}</span>
+                    {link.name}
                   </Link>
                 )
               })}
             </nav>
 
-            <div className="flex items-center gap-2 lg:flex-1 justify-end">
-              {showInstallButton && (
-                <button
-                  onClick={handleInstallClick}
-                  className="p-2 hover:bg-primary/10 rounded-lg smooth-transition hover:scale-105 active:scale-95"
-                  aria-label="Install App"
-                  title="Install App"
-                >
-                  <Download className="w-5 h-5 text-primary animate-bounce" />
-                </button>
-              )}
-              
-              
-              <div className="relative" ref={searchRef}>
-                <button
-                  onClick={() => setSearchOpen(!searchOpen)}
-                  className="p-2 hover:bg-primary/10 rounded-lg smooth-transition hover:scale-105 active:scale-95"
-                  aria-label="Search"
-                >
-                  <Search className="w-5 h-5 text-foreground" />
-                </button>
-
-                <AnimatePresence>
-                  {searchOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-20 sm:top-full sm:mt-2 w-auto sm:w-96 bg-card border border-primary/30 rounded-xl shadow-2xl glow-pink p-4 z-50"
-                    >
-                      <form onSubmit={handleSearch} className="w-full">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                          <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search courses..."
-                            className="w-full pl-10 pr-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground text-sm smooth-transition"
-                            autoFocus
-                          />
-                        </div>
-                        <button
-                          type="submit"
-                          className="w-full mt-3 px-4 py-2 bg-gradient-pink-purple text-white rounded-lg hover:opacity-90 smooth-transition font-medium"
-                        >
-                          Search
-                        </button>
-                      </form>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
+            <div className="flex items-center gap-2">
               {currentUser ? (
                 <>
                   <Link
                     to={isAdmin ? "/admin" : "/dashboard"}
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white dark:text-black rounded-lg smooth-transition text-sm font-medium hover:scale-105 active:scale-95"
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors text-sm font-medium"
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Link>
                   <button
                     onClick={handleSignOut}
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-lg smooth-transition text-sm font-medium hover:scale-105 active:scale-95"
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 hover:bg-muted rounded-md transition-colors text-sm font-medium text-foreground"
                   >
                     <LogOut className="w-4 h-4" />
-                    Logout
+                    Sign Out
                   </button>
                 </>
               ) : (
                 <Link
                   to="/login"
-                  className="hidden sm:block px-4 py-2 bg-primary hover:bg-primary/90 text-white dark:text-black rounded-lg smooth-transition text-sm font-medium hover:scale-105 active:scale-95"
+                  className="hidden sm:block px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors text-sm font-medium"
                 >
                   Login
                 </Link>
@@ -416,7 +356,7 @@ export default function Header() {
 
               <button
                 onClick={toggleTheme}
-                className="p-2 hover:bg-primary/10 rounded-lg smooth-transition hover:scale-105 active:scale-95"
+                className="p-1.5 hover:bg-muted rounded-md transition-colors"
                 aria-label="Toggle theme"
               >
                 {isDark ? <Sun className="w-5 h-5 text-foreground" /> : <Moon className="w-5 h-5 text-foreground" />}

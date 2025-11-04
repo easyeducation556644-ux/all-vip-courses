@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc, query, orderBy, where } from "firebase/firestore";
 import { db } from "../../lib/firebase";
-import { CheckCircle, XCircle, Trash2, Clock, Phone, Hash, DollarSign, User, BookOpen } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Clock, Phone, Hash, DollarSign, User, BookOpen, Send } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -203,6 +203,16 @@ export default function ManageEnrollments() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {enrollment.paymentInfo?.customerName && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <User size={16} className="text-primary" />
+                          <span className="text-muted-foreground">Name:</span>
+                          <span className="font-medium text-card-foreground">
+                            {enrollment.paymentInfo.customerName}
+                          </span>
+                        </div>
+                      )}
+
                       <div className="flex items-center gap-2 text-sm">
                         <User size={16} className="text-primary" />
                         <span className="text-muted-foreground">User:</span>
@@ -218,6 +228,31 @@ export default function ManageEnrollments() {
                           {course?.title || "Unknown Course"}
                         </span>
                       </div>
+
+                      {enrollment.paymentInfo?.telegramId && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Send size={16} className="text-primary" />
+                          <span className="text-muted-foreground">Telegram ID:</span>
+                          <span className="font-medium text-card-foreground">
+                            {enrollment.paymentInfo.telegramId}
+                          </span>
+                        </div>
+                      )}
+
+                      {enrollment.paymentInfo?.telegramLink && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Send size={16} className="text-primary" />
+                          <span className="text-muted-foreground">Telegram Link:</span>
+                          <a 
+                            href={enrollment.paymentInfo.telegramLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="font-medium text-primary hover:underline"
+                          >
+                            Open Link
+                          </a>
+                        </div>
+                      )}
 
                       <div className="flex items-center gap-2 text-sm">
                         <Phone size={16} className="text-primary" />

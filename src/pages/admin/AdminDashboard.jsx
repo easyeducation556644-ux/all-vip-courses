@@ -38,7 +38,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Desktop Header */}
-      <div className="hidden lg:block border-b border-border bg-card sticky top-0 z-40 shadow-sm">
+      <div className="hidden lg:block border-b border-border bg-card sticky top-0 z-10 shadow-sm">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div>
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-border sticky top-0 z-50 shadow-sm">
+      <div className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-border sticky top-0 z-10 shadow-sm">
         <div>
           <h1 className="text-base font-bold text-foreground">Admin Panel</h1>
           <p className="text-xs text-muted-foreground font-medium">{currentPage}</p>

@@ -88,39 +88,35 @@ export default function Courses() {
   const categories = ["all", ...new Set(courses.map((c) => c.category).filter(Boolean))]
 
   return (
-    <div className="min-h-screen py-8 md:py-12 px-4 md:px-6">
-      <div className="container mx-auto max-w-5xl">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Explore Courses</h1>
-          <p className="text-base md:text-lg text-muted-foreground">Discover our collection of educational courses</p>
+    <div className="min-h-screen py-6 md:py-8 px-4">
+      <div className="container mx-auto max-w-3xl">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold mb-1">Explore Courses</h1>
+          <p className="text-sm text-muted-foreground">Discover our collection of courses</p>
         </motion.div>
 
-        <div className="bg-card border border-border rounded-lg p-4 md:p-6 mb-8 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            {/* Search */}
+        <div className="bg-card border border-border rounded-lg p-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2 text-foreground">Search Courses</label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by title, instructor, or description..."
-                  className="w-full pl-10 pr-4 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm smooth-transition"
+                  placeholder="Search courses..."
+                  className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm"
                 />
               </div>
             </div>
 
-            {/* Category Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">Category</label>
               <div className="relative">
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm appearance-none smooth-transition"
+                  className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm appearance-none"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -132,15 +128,14 @@ export default function Courses() {
             </div>
           </div>
 
-          {/* Sort Options */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-            <span className="text-sm font-medium text-foreground">Sort by:</span>
-            <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Sort:</span>
+            <div className="flex gap-2">
               {["newest", "oldest", "title"].map((option) => (
                 <button
                   key={option}
                   onClick={() => setSortBy(option)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium smooth-transition ${
+                  className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
                     sortBy === option
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground hover:bg-muted/80"
@@ -153,24 +148,22 @@ export default function Courses() {
           </div>
         </div>
 
-        {/* Results Count */}
-        <div className="mb-6 text-sm text-muted-foreground">
-          Showing {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
+        <div className="mb-4 text-xs text-muted-foreground">
+          {filteredCourses.length} {filteredCourses.length === 1 ? "course" : "courses"}
         </div>
 
-        {/* Courses Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="bg-card border border-border rounded-lg p-4 animate-pulse">
-                <div className="aspect-video bg-muted rounded-lg mb-4"></div>
-                <div className="h-5 bg-muted rounded mb-2"></div>
-                <div className="h-4 bg-muted rounded w-2/3"></div>
+                <div className="aspect-video bg-muted rounded-md mb-3"></div>
+                <div className="h-4 bg-muted rounded mb-2"></div>
+                <div className="h-3 bg-muted rounded w-2/3"></div>
               </div>
             ))}
           </div>
         ) : filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredCourses.map((course, index) => (
               <motion.div
                 key={course.id}
@@ -184,9 +177,9 @@ export default function Courses() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No courses found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filters</p>
+            <BookOpen className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <h3 className="text-base font-semibold mb-1">No courses found</h3>
+            <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
           </div>
         )}
       </div>
