@@ -308,7 +308,7 @@ export default function Header() {
 
               <Link to="/" className="flex items-center">
                 <div className="text-base sm:text-lg font-semibold text-foreground">
-                  Easy Education
+                  All Vip Courses
                 </div>
               </Link>
             </div>
@@ -393,7 +393,7 @@ export default function Header() {
                     whileTap={{ scale: 0.95 }}
                     className="text-2xl font-bold text-white"
                   >
-                    Easy Education
+                    All Vip Courses
                   </motion.div>
                 </Link>
                 <button
@@ -541,7 +541,7 @@ export default function Header() {
                       <Download className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-lg sm:text-xl font-bold mb-0.5">Install Easy Education</h2>
+                      <h2 className="text-lg sm:text-xl font-bold mb-0.5">Install All Vip Courses</h2>
                       <p className="text-sm text-muted-foreground">
                         Quick access & offline learning
                       </p>

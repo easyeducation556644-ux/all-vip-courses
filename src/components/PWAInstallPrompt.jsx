@@ -122,7 +122,7 @@ export default function PWAInstallPrompt() {
                   <Smartphone className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-lg sm:text-xl font-bold mb-0.5">Install Easy Education</h2>
+                  <h2 className="text-lg sm:text-xl font-bold mb-0.5">Install All Vip Courses</h2>
                   <p className="text-sm text-muted-foreground">
                     Quick access & offline learning
                   </p>

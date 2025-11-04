@@ -13,6 +13,7 @@ import ConfirmDialog from "../../components/ConfirmDialog"
 export default function ManageCourses() {
   const [courses, setCourses] = useState([])
   const [categories, setCategories] = useState([])
+  const [subcategories, setSubcategories] = useState([])
   const [teachers, setTeachers] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -43,9 +44,10 @@ export default function ManageCourses() {
 
   const fetchData = async () => {
     try {
-      const [coursesSnap, categoriesSnap, teachersSnap] = await Promise.all([
+      const [coursesSnap, categoriesSnap, subcategoriesSnap, teachersSnap] = await Promise.all([
         getDocs(collection(db, "courses")),
         getDocs(collection(db, "categories")),
+        getDocs(collection(db, "subcategories")),
         getDocs(collection(db, "teachers")),
       ])
 
@@ -54,6 +56,7 @@ export default function ManageCourses() {
           .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
       )
       setCategories(categoriesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+      setSubcategories(subcategoriesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
       setTeachers(teachersSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -479,7 +482,10 @@ export default function ManageCourses() {
                   <label className="block text-sm font-medium mb-1.5">Category</label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: "" })}
+                    onChange={(e) => {
+                      const selectedCategory = categories.find(c => c.title === e.target.value)
+                      setFormData({ ...formData, category: e.target.value, subcategory: "", categoryId: selectedCategory?.id || "" })
+                    }}
                     className="w-full px-3 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                   >
                     <option value="">Select category</option>
@@ -493,14 +499,22 @@ export default function ManageCourses() {
 
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Subcategory (Optional)</label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.subcategory || ""}
                     onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                     className="w-full px-3 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                    placeholder="Enter subcategory"
                     disabled={!formData.category}
-                  />
+                  >
+                    <option value="">Select subcategory (optional)</option>
+                    {subcategories.filter(sub => {
+                      const selectedCategory = categories.find(c => c.title === formData.category)
+                      return sub.categoryId === selectedCategory?.id
+                    }).map((sub) => (
+                      <option key={sub.id} value={sub.title}>
+                        {sub.title}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>

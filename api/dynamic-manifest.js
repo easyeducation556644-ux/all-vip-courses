@@ -28,8 +28,8 @@ if (admin.apps.length === 0) {
 
 export default async function handler(req, res) {
   try {
-    let appName = 'Easy Education - Free Online Courses';
-    let appShortName = 'Easy Education';
+    let appName = 'All Vip Courses - Free Online Courses';
+    let appShortName = 'All Vip Courses';
     let appIcon192 = '/icon-192x192.png';
     let appIcon512 = '/icon-512x512.png';
     let themeColor = '#3b82f6';

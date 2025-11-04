@@ -13,12 +13,27 @@ export default function MyCourses() {
   const { currentUser } = useAuth()
   const [enrollments, setEnrollments] = useState([])
   const [loading, setLoading] = useState(true)
+  const [clickedLinks, setClickedLinks] = useState({})
 
   useEffect(() => {
     if (currentUser) {
       fetchEnrollments()
+      loadClickedLinks()
     }
   }, [currentUser])
+
+  const loadClickedLinks = () => {
+    const saved = localStorage.getItem(`telegram_clicks_${currentUser?.uid}`)
+    if (saved) {
+      setClickedLinks(JSON.parse(saved))
+    }
+  }
+
+  const saveClickedLink = (courseId) => {
+    const updated = { ...clickedLinks, [courseId]: true }
+    setClickedLinks(updated)
+    localStorage.setItem(`telegram_clicks_${currentUser?.uid}`, JSON.stringify(updated))
+  }
 
   const fetchEnrollments = async () => {
     try {
@@ -55,7 +70,8 @@ export default function MyCourses() {
     }
   }
 
-  const handleTelegramClick = (course) => {
+  const handleTelegramClick = (enrollment) => {
+    const course = enrollment.course
     if (!course.telegramLink) return
     
     let telegramAppUrl
@@ -109,80 +125,83 @@ export default function MyCourses() {
         </motion.div>
 
         {/* Courses Grid */}
-        {purchasedCourses.length > 0 ? (
+        {enrollments.length > 0 && enrollments.filter(e => e.paymentStatus === 'approved').length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {purchasedCourses.map((course, index) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                {/* Course Image */}
-                <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
-                  {course.thumbnailURL ? (
-                    <img
-                      src={course.thumbnailURL}
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <BookOpen className="w-12 h-12 text-primary/50" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Course Info */}
-                <div className="p-5 space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-lg line-clamp-2 mb-1">{course.title}</h3>
-                    {course.category && (
-                      <p className="text-xs text-muted-foreground">{course.category}</p>
+            {enrollments.filter(e => e.paymentStatus === 'approved').map((enrollment, index) => {
+              const course = enrollment.course
+              return (
+                <motion.div
+                  key={enrollment.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  {/* Course Image */}
+                  <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
+                    {course.thumbnailURL ? (
+                      <img
+                        src={course.thumbnailURL}
+                        alt={course.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <BookOpen className="w-12 h-12 text-primary/50" />
+                      </div>
                     )}
                   </div>
 
-                  {/* Telegram Group Access */}
-                  {course.telegramLink ? (
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => handleTelegramClick(course)}
-                        disabled={clickedLinks[course.id]}
-                        className={`w-full py-3 rounded-lg transition-all font-medium flex items-center justify-center gap-2 ${
-                          clickedLinks[course.id]
-                            ? 'bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-md hover:shadow-lg'
-                        }`}
-                      >
-                        {clickedLinks[course.id] ? (
-                          <>
-                            <Check className="w-5 h-5" />
-                            Opened in Telegram
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-5 h-5" />
-                            Join Telegram Group
-                          </>
-                        )}
-                      </button>
-                      <p className="text-xs text-center text-muted-foreground">
-                        {clickedLinks[course.id]
-                          ? 'Button disabled after opening'
-                          : 'Opens directly in Telegram app'}
-                      </p>
+                  {/* Course Info */}
+                  <div className="p-5 space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg line-clamp-2 mb-1">{course.title}</h3>
+                      {course.category && (
+                        <p className="text-xs text-muted-foreground">{course.category}</p>
+                      )}
                     </div>
-                  ) : (
-                    <div className="py-3 px-4 bg-muted/50 border border-border rounded-lg text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Telegram link not available yet
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+
+                    {/* Telegram Group Access */}
+                    {course.telegramLink ? (
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => handleTelegramClick(enrollment)}
+                          disabled={clickedLinks[course.id]}
+                          className={`w-full py-3 rounded-lg transition-all font-medium flex items-center justify-center gap-2 ${
+                            clickedLinks[course.id]
+                              ? 'bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 cursor-not-allowed'
+                              : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-md hover:shadow-lg'
+                          }`}
+                        >
+                          {clickedLinks[course.id] ? (
+                            <>
+                              <Check className="w-5 h-5" />
+                              Opened in Telegram
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-5 h-5" />
+                              Join Telegram Group
+                            </>
+                          )}
+                        </button>
+                        <p className="text-xs text-center text-muted-foreground">
+                          {clickedLinks[course.id]
+                            ? 'Button disabled after opening'
+                            : 'Opens directly in Telegram app'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="py-3 px-4 bg-muted/50 border border-border rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground">
+                          Telegram link not available yet
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
         ) : (
           <motion.div

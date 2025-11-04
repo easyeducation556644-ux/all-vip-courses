@@ -13,6 +13,8 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Courses from "./pages/Courses"
 import CourseDetail from "./pages/CourseDetail"
+import CategoryPage from "./pages/CategoryPage"
+import SubcategoryPage from "./pages/SubcategoryPage"
 import Profile from "./pages/Profile"
 import Dashboard from "./pages/Dashboard"
 import AdminDashboard from "./pages/admin/AdminDashboard"
@@ -39,6 +41,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/courses" element={<Courses />} />
+              <Route path="/category/:categoryId" element={<CategoryPage />} />
+              <Route path="/category/:categoryId/subcategory/:subcategoryId" element={<SubcategoryPage />} />
               <Route path="/:slug" element={<CourseDetail />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/checkout-complete" element={<CheckoutComplete />} />

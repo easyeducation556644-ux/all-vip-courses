@@ -22,10 +22,10 @@ export default function WebsiteSettings() {
   const [settings, setSettings] = useState({
     communityEnabled: true,
     paymentInstructions: "Please pay to 018XXXXXXXX via bKash",
-    siteName: "Easy Education",
+    siteName: "All Vip Courses",
     siteDescription: "Learn from the best educators",
-    appName: "Easy Education",
-    appShortName: "EasyEdu",
+    appName: "All Vip Courses",
+    appShortName: "AllVipCrs",
     appIcon: "",
     appLogo: "",
     themeColor: "#0ea5e9",
@@ -89,14 +89,14 @@ export default function WebsiteSettings() {
         snapshot.docs.forEach((doc) => {
           const data = doc.data()
           if (data.type === "general") {
-            settingsData.siteName = data.siteName || "Easy Education"
+            settingsData.siteName = data.siteName || "All Vip Courses"
             settingsData.siteDescription = data.siteDescription || "Learn from the best educators"
             settingsData.communityEnabled = data.communityEnabled !== false
           } else if (data.type === "payment") {
             settingsData.paymentInstructions = data.instructions || "Please pay to 018XXXXXXXX via bKash"
           } else if (data.type === "pwa") {
-            settingsData.appName = data.appName || "Easy Education"
-            settingsData.appShortName = data.appShortName || "EasyEdu"
+            settingsData.appName = data.appName || "All Vip Courses"
+            settingsData.appShortName = data.appShortName || "AllVipCrs"
             settingsData.appIcon = data.appIcon || ""
             settingsData.appLogo = data.appLogo || ""
             settingsData.themeColor = data.themeColor || "#0ea5e9"
@@ -397,7 +397,7 @@ export default function WebsiteSettings() {
                   type="text"
                   value={settings.appName}
                   onChange={(e) => setSettings({ ...settings, appName: e.target.value })}
-                  placeholder="Easy Education"
+                  placeholder="All Vip Courses"
                   className="w-full px-4 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary smooth-transition"
                 />
                 <p className="text-xs text-muted-foreground mt-1">Full name displayed in the app</p>

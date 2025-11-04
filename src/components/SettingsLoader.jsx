@@ -9,7 +9,7 @@ export default function SettingsLoader() {
         const settingsRef = collection(db, "settings")
         const snapshot = await getDocs(settingsRef)
 
-        let appName = "Easy Education"
+        let appName = "All Vip Courses"
         let appIcon = null
         let themeColor = "#3b82f6"
         

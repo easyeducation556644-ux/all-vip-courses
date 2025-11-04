@@ -70,7 +70,7 @@ export default function Home() {
   }
 
   const handleCategoryClick = (category) => {
-    navigate("/courses", { state: { categoryFilter: category.title } })
+    navigate(`/category/${category.id}`)
   }
 
   return (
@@ -134,10 +134,21 @@ export default function Home() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <button onClick={() => handleCategoryClick(category)} className="w-full text-left group">
-                    <div className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary hover:shadow-sm transition-all p-4">
-                      <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                        {category.title}
-                      </h3>
+                    <div className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary hover:shadow-sm transition-all">
+                      {category.imageURL && (
+                        <div className="aspect-video overflow-hidden">
+                          <img 
+                            src={category.imageURL} 
+                            alt={category.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          {category.title}
+                        </h3>
+                      </div>
                     </div>
                   </button>
                 </motion.div>

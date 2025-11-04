@@ -9,10 +9,10 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
-              Easy Education
+              All Vip Courses
             </h3>
             <p className="text-muted-foreground text-sm">
-              HSC academic & admissiozn courses  at low price.
+              HSC academic & admission courses at low price.
             </p>
           </div>
 
@@ -114,7 +114,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-muted-foreground text-sm grid grid-2">
-          <p>Easy Education © All rights reserved</p>
+          <p>All Vip Courses © All rights reserved</p>
           <p>Developed by: <a href= "https://t.me/hermanoMayorBot">Hermano Mayor</a></p>
         </div>
       

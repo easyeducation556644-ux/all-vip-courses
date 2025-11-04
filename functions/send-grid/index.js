@@ -45,7 +45,7 @@ serve(async (req) => {
             subject: subject,
           },
         ],
-        from: { email: SENDGRID_FROM_EMAIL, name: "Easy Education" },
+        from: { email: SENDGRID_FROM_EMAIL, name: "All Vip Courses" },
         content: [
           html ? { type: "text/html", value: html } : null,
           text ? { type: "text/plain", value: text } : null,
