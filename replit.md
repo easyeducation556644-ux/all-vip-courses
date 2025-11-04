@@ -9,6 +9,28 @@ The application serves both free and paid educational content, with support for 
 ## Recent Changes (November 2025)
 
 ### Latest Migration Updates (November 04, 2025)
+- **MyCourses Page Fix**: Updated to fetch enrolled courses from payments collection
+  - Query courses where payment status is "approved" instead of relying on enrollments collection
+  - Ensures all purchased courses are displayed correctly for users
+  - Fixed issue where some enrolled courses were not appearing
+- **CourseCard Action Buttons**: Enhanced CourseCard component with context-aware action buttons
+  - Shows "Buy Now" for courses not yet purchased
+  - Shows "Pending Payment" badge for courses with pending payment approval
+  - Shows "Join Telegram Group" button for approved enrollments
+  - All actions properly integrated with Telegram deep linking (tg:// protocol)
+- **Database-Driven Category Navigation**: Fixed category filtering on Courses page
+  - Categories now loaded directly from Firestore categories collection
+  - No longer derived from existing courses, showing all categories even if empty
+  - Maintains proper ordering and published status filtering
+- **Dynamic Subcategory Filter**: Added subcategory dropdown to Courses page
+  - Loads subcategories based on selected category from database
+  - Allows users to filter courses by both category and subcategory
+  - Seamless integration with existing search and sort functionality
+- **Image Upload for Categories**: Enhanced admin panel with ImgBB integration
+  - Admins can now upload images directly for categories and subcategories
+  - Supports both URL paste and file upload with live preview
+  - Image files uploaded to ImgBB and URLs stored in Firestore
+  - Secure server-side proxy protects ImgBB API key
 - **Complete Cart System Removal**: Fully removed CartProvider and cart-related UI across the application
   - Direct "Buy Now" flow using localStorage for single-item checkout
   - Streamlined checkout experience for users
@@ -20,10 +42,6 @@ The application serves both free and paid educational content, with support for 
   - TelegramJoinButton component with tg:// protocol for direct app opening
   - Join status tracking with `telegramJoinedAt` timestamp in enrollments
   - Prevents web/inspection access by opening in Telegram app only
-- **Category/Subcategory Enhancement**: Added image URL support
-  - Categories and subcategories now have optional `imageURL` field
-  - Live inline preview when adding/editing image URLs
-  - Ready for use in course filtering and browsing UIs
 
 ### Design & UX Improvements
 - **Minimal Design Aesthetic**: Redesigned entire platform with cleaner, minimal aesthetic inspired by rj1.dev
