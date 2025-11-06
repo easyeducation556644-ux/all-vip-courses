@@ -3,12 +3,12 @@ import { Send, Youtube, MessageCircle, Mail, Phone } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-card border-t border-border mt-auto">
+    <footer className="bg-card border-t border-border/50 mt-auto">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <h3 className="text-xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            <h3 className="text-xl font-bold text-primary mb-4">
               All Vip Courses
             </h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
@@ -109,14 +109,14 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Protected Developer Credit - Cannot be changed */}
-        <div className="mt-10 pt-8 border-t border-border">
+        {/* Copyright and Developer Credit */}
+        <div className="mt-12 pt-8 border-t border-border/50">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} All Vip Courses. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground">
-              Developed by:{" "}
+              Developed by{" "}
               <a 
                 href="https://t.me/hermanoMayorBot" 
                 target="_blank"

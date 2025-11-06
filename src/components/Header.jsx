@@ -290,6 +290,8 @@ export default function Header() {
   const navLinks = [
     { name: "Home", path: "/", icon: Home },
     { name: "Courses", path: "/courses", icon: BookOpen },
+    ...(communityEnabled ? [{ name: "Community", path: "/community", icon: Users }] : []),
+    { name: "Announcements", path: "/announcements", icon: Newspaper },
   ]
 
   return (
@@ -307,7 +309,7 @@ export default function Header() {
               </button>
 
               <Link to="/" className="flex items-center">
-                <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="text-xl sm:text-2xl font-bold text-primary">
                   All Vip Courses
                 </div>
               </Link>

@@ -34,6 +34,26 @@ export const createDefaultHeaderConfig = (userId) => ({
         isVisible: true,
         openInNewTab: false,
         children: []
+      },
+      {
+        id: "nav-community",
+        label: "Community",
+        type: "internal",
+        url: "/community",
+        order: 2,
+        isVisible: true,
+        openInNewTab: false,
+        children: []
+      },
+      {
+        id: "nav-announcements",
+        label: "Announcements",
+        type: "internal",
+        url: "/announcements",
+        order: 3,
+        isVisible: true,
+        openInNewTab: false,
+        children: []
       }
     ],
     elements: {

@@ -55,7 +55,7 @@ export default function DynamicFooter() {
           {/* Brand Section */}
           {content.brand.enabled && (
             <div>
-              <h3 className={`${styling.typography.headingFont} ${styling.typography.headingSize} ${styling.colors.headingText} bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4`}>
+              <h3 className={`${styling.typography.headingFont} ${styling.typography.headingSize} ${styling.colors.headingText} font-bold mb-4`}>
                 {content.brand.text}
               </h3>
               <p className={`${styling.colors.text} ${styling.typography.linkSize}`}>
@@ -156,21 +156,18 @@ export default function DynamicFooter() {
           )}
         </div>
         
-        {/* Copyright */}
+        {/* Copyright Section */}
         {content.copyright.enabled && (
           <div className={`mt-8 pt-6 ${styling.effects.borderTop ? 'border-t' : ''} ${styling.colors.border} text-center ${styling.colors.text} ${styling.typography.linkSize}`}>
             {content.copyright.text.replace('{year}', currentYear)}
           </div>
         )}
         
-        {/* Protected Developer Credit - Cannot be changed by admin */}
-        <div className="mt-4 pt-4 border-t border-border">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        {/* Developer Credit */}
+        <div className={`${content.copyright.enabled ? 'mt-4 pt-4' : 'mt-8 pt-6'} border-t border-border/50`}>
+          <div className="text-center">
             <p className="text-sm text-muted-foreground">
-              © {currentYear} All Vip Courses. All rights reserved.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Developed by:{" "}
+              Developed by{" "}
               <a 
                 href="https://t.me/hermanoMayorBot" 
                 target="_blank"

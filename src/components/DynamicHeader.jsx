@@ -62,7 +62,7 @@ export default function DynamicHeader() {
             {content.logo.type === 'image' && content.logo.imageUrl ? (
               <img src={content.logo.imageUrl} alt={content.logo.alt || "Logo"} className="h-8 sm:h-10 object-contain" />
             ) : (
-              <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="text-xl sm:text-2xl font-bold text-primary">
                 {content.logo.text || "All Vip Courses"}
               </div>
             )}
@@ -157,7 +157,7 @@ export default function DynamicHeader() {
               >
                 <div className="p-4 space-y-4">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <span className="text-xl font-bold text-primary">
                       Menu
                     </span>
                     <button
