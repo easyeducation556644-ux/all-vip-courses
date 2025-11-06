@@ -262,6 +262,28 @@ export default function HeaderContentEditor({ config, onChange, sitePages }) {
                   />
                 </div>
               </div>
+              
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={item.isVisible !== false}
+                    onChange={(e) => updateNavigation(index, 'isVisible', e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm">Visible on header</span>
+                </label>
+                
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={item.openInNewTab || false}
+                    onChange={(e) => updateNavigation(index, 'openInNewTab', e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm">Open in new tab</span>
+                </label>
+              </div>
             </div>
           ))}
         </div>
