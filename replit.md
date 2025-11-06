@@ -8,6 +8,26 @@ The application serves both free and paid educational content, with support for 
 
 ## Recent Changes (November 2025)
 
+### Dynamic Header & Footer System (November 06, 2025)
+- **Fully Dynamic Header Configuration**: Header now completely controlled from database
+  - **Dynamic Padding**: Top, bottom, left, right padding configurable via `styling.layout.padding`
+  - **Dynamic Logo Color**: Logo text color controllable via `content.logo.color`
+  - **Dynamic Typography**: Logo size, font weight, nav font, and nav size from database
+  - **Dynamic Colors**: Background, text, border, hover states all configurable
+  - **Dynamic Effects**: Shadow, backdrop blur, and other effects from database
+  - **Menu Visibility**: Navigation items show/hide based on `isVisible` flag
+  - **Mobile & Desktop Menus**: Both mobile sidebar and desktop navigation use same dynamic configuration
+  - **Default Configuration**: Built-in fallback if database config not available
+  - **Auto-Initialization**: Admin panel automatically creates default config on first access
+- **Database Schema for Header**:
+  - Collection: `headerConfigs`
+  - Document ID: `default` (or custom IDs for multiple layouts)
+  - Fields: `content` (logo, navigation, elements), `styling` (layout, colors, typography, effects), `displayRules` (pages, roles, devices)
+- **Admin Control**: Header/Footer Builder in admin panel for visual configuration
+  - Edit logo, navigation items, styling, and display rules
+  - Preview changes before publishing
+  - Version control with revision history
+
 ### Latest Migration Updates (November 04, 2025)
 - **MyCourses Page Fix**: Updated to fetch enrolled courses from payments collection
   - Query courses where payment status is "approved" instead of relying on enrollments collection

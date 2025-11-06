@@ -12,7 +12,8 @@ export const createDefaultHeaderConfig = (userId) => ({
       type: "text",
       text: "All Vip Courses",
       link: "/",
-      alt: "All Vip Courses Logo"
+      alt: "All Vip Courses Logo",
+      color: "text-primary"
     },
     navigation: [
       {

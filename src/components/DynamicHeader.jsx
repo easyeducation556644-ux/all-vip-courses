@@ -7,6 +7,20 @@ import { useTheme } from "../contexts/ThemeContext"
 import { fetchActiveHeaderConfig } from "../lib/headerFooterUtils"
 import Header from "./Header"
 
+// Helper function to convert rem/px to Tailwind class value
+const getPaddingValue = (value) => {
+  if (!value) return '4'
+  if (typeof value === 'string') {
+    const num = parseFloat(value)
+    if (value.includes('rem')) {
+      return Math.round(num * 4).toString()
+    } else if (value.includes('px')) {
+      return Math.round(num / 4).toString()
+    }
+  }
+  return '4'
+}
+
 // Default configuration when Firestore config is not available
 const DEFAULT_CONFIG = {
   content: {
@@ -14,7 +28,8 @@ const DEFAULT_CONFIG = {
       type: "text",
       text: "All Vip Courses",
       link: "/",
-      alt: "All Vip Courses Logo"
+      alt: "All Vip Courses Logo",
+      color: "text-primary"
     },
     navigation: [
       { id: "nav-home", label: "Home", url: "/", isVisible: true, openInNewTab: false },
@@ -28,6 +43,35 @@ const DEFAULT_CONFIG = {
     },
     mobileMenu: {
       enabled: true
+    }
+  },
+  styling: {
+    layout: {
+      padding: {
+        top: "1rem",
+        bottom: "1rem",
+        left: "1rem",
+        right: "1rem"
+      },
+      sticky: true,
+      zIndex: 50
+    },
+    colors: {
+      background: "bg-card/95",
+      text: "text-foreground",
+      border: "border-border",
+      hoverBackground: "hover:bg-accent",
+      hoverText: "hover:text-primary"
+    },
+    typography: {
+      logoFont: "font-bold",
+      logoSize: "text-xl sm:text-2xl",
+      navFont: "font-medium",
+      navSize: "text-sm"
+    },
+    effects: {
+      shadow: "shadow-sm",
+      backdropBlur: "backdrop-blur-md"
     }
   }
 }
@@ -82,20 +126,28 @@ export default function DynamicHeader() {
     return <Header />
   }
   
-  const { content } = config
-  
+  const { content, styling } = config
   const visibleNavItems = (content.navigation || []).filter(item => item.isVisible)
   
+  // Build dynamic classes from styling config
+  const headerClass = `${styling?.layout?.sticky ? 'sticky top-0' : ''} ${styling?.layout?.zIndex ? `z-${styling.layout.zIndex}` : 'z-50'} ${styling?.colors?.background || 'bg-card/95'} ${styling?.effects?.backdropBlur || 'backdrop-blur-md'} border-b ${styling?.colors?.border || 'border-border'} ${styling?.effects?.shadow || 'shadow-sm'}`
+  
+  const containerClass = `container mx-auto max-w-7xl px-${getPaddingValue(styling?.layout?.padding?.left)} sm:px-6 lg:px-${getPaddingValue(styling?.layout?.padding?.right)} py-${getPaddingValue(styling?.layout?.padding?.top)}`
+  
+  const logoClass = `${styling?.typography?.logoSize || 'text-xl sm:text-2xl'} ${styling?.typography?.logoFont || 'font-bold'} ${content?.logo?.color || styling?.colors?.text || 'text-primary'}`
+  
+  const navLinkClass = `px-4 py-2 rounded-lg ${styling?.colors?.hoverBackground || 'hover:bg-accent'} transition-colors ${styling?.typography?.navSize || 'text-sm'} ${styling?.typography?.navFont || 'font-medium'} ${styling?.colors?.text || 'text-foreground'} ${styling?.colors?.hoverText || 'hover:text-primary'}`
+  
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
-      <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+    <header className={headerClass}>
+      <nav className={containerClass}>
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to={content?.logo?.link || "/"} className="flex items-center">
             {content?.logo?.type === 'image' && content?.logo?.imageUrl ? (
               <img src={content.logo.imageUrl} alt={content.logo.alt || "Logo"} className="h-8 sm:h-10 object-contain" />
             ) : (
-              <div className="text-xl sm:text-2xl font-bold text-primary">
+              <div className={logoClass}>
                 {content?.logo?.text || "All Vip Courses"}
               </div>
             )}
@@ -109,7 +161,7 @@ export default function DynamicHeader() {
                 to={item.url}
                 target={item.openInNewTab ? "_blank" : undefined}
                 rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                className="px-4 py-2 rounded-lg hover:bg-accent transition-colors text-sm font-medium text-foreground hover:text-primary"
+                className={navLinkClass}
               >
                 {item.label}
               </Link>
@@ -187,7 +239,7 @@ export default function DynamicHeader() {
           >
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
-                <span className="text-xl font-bold text-primary">
+                <span className={`text-xl font-bold ${content?.logo?.color || 'text-primary'}`}>
                   {content?.logo?.text || "Menu"}
                 </span>
                 <button
