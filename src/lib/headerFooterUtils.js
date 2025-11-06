@@ -278,39 +278,52 @@ export const createDefaultFooterConfig = (userId) => ({
 // Fetch Active Header Configuration with conditional display logic
 export const fetchActiveHeaderConfig = async (currentPath, userRole = 'guest', deviceType = 'desktop') => {
   try {
-    const q = query(
-      collection(db, "headerConfigs"),
-      where("isActive", "==", true),
-      where("isPublished", "==", true),
-      orderBy("updatedAt", "desc")
-    )
-    
-    const snapshot = await getDocs(q)
-    
-    if (!snapshot.empty) {
-      const configs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      
-      // Find the first config that matches display rules for current context
-      const matchingConfig = configs.find(config => 
-        shouldDisplayConfig(config, currentPath, userRole, deviceType)
-      )
-      
-      if (matchingConfig) {
-        return matchingConfig
-      }
-      
-      // Fallback to first active config if no match
-      return configs[0]
-    }
-    
-    // If no active config, try to get default
+    // First try to get the default config directly
     const defaultDoc = await getDoc(doc(db, "headerConfigs", "default"))
     if (defaultDoc.exists()) {
       const defaultConfig = { id: defaultDoc.id, ...defaultDoc.data() }
-      if (shouldDisplayConfig(defaultConfig, currentPath, userRole, deviceType)) {
-        return defaultConfig
+      if (defaultConfig.isActive && defaultConfig.isPublished) {
+        if (shouldDisplayConfig(defaultConfig, currentPath, userRole, deviceType)) {
+          return defaultConfig
+        }
+        return defaultConfig // Return even if doesn't match rules as ultimate fallback
       }
-      return defaultConfig // Return even if doesn't match rules as ultimate fallback
+    }
+    
+    // If default doesn't work, try querying (may need index)
+    try {
+      const q = query(
+        collection(db, "headerConfigs"),
+        where("isActive", "==", true),
+        where("isPublished", "==", true)
+      )
+      
+      const snapshot = await getDocs(q)
+      
+      if (!snapshot.empty) {
+        const configs = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) => {
+            const aTime = a.updatedAt?.toDate?.() || new Date(0)
+            const bTime = b.updatedAt?.toDate?.() || new Date(0)
+            return bTime - aTime
+          })
+        
+        // Find the first config that matches display rules for current context
+        const matchingConfig = configs.find(config => 
+          shouldDisplayConfig(config, currentPath, userRole, deviceType)
+        )
+        
+        if (matchingConfig) {
+          return matchingConfig
+        }
+        
+        // Fallback to first active config if no match
+        return configs[0]
+      }
+    } catch (queryError) {
+      console.error("Error querying header configs (may need index):", queryError)
+      // Fall through to return null
     }
     
     return null
@@ -323,39 +336,52 @@ export const fetchActiveHeaderConfig = async (currentPath, userRole = 'guest', d
 // Fetch Active Footer Configuration with conditional display logic
 export const fetchActiveFooterConfig = async (currentPath, userRole = 'guest', deviceType = 'desktop') => {
   try {
-    const q = query(
-      collection(db, "footerConfigs"),
-      where("isActive", "==", true),
-      where("isPublished", "==", true),
-      orderBy("updatedAt", "desc")
-    )
-    
-    const snapshot = await getDocs(q)
-    
-    if (!snapshot.empty) {
-      const configs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      
-      // Find the first config that matches display rules for current context
-      const matchingConfig = configs.find(config => 
-        shouldDisplayConfig(config, currentPath, userRole, deviceType)
-      )
-      
-      if (matchingConfig) {
-        return matchingConfig
-      }
-      
-      // Fallback to first active config if no match
-      return configs[0]
-    }
-    
-    // If no active config, try to get default
+    // First try to get the default config directly
     const defaultDoc = await getDoc(doc(db, "footerConfigs", "default"))
     if (defaultDoc.exists()) {
       const defaultConfig = { id: defaultDoc.id, ...defaultDoc.data() }
-      if (shouldDisplayConfig(defaultConfig, currentPath, userRole, deviceType)) {
-        return defaultConfig
+      if (defaultConfig.isActive && defaultConfig.isPublished) {
+        if (shouldDisplayConfig(defaultConfig, currentPath, userRole, deviceType)) {
+          return defaultConfig
+        }
+        return defaultConfig // Return even if doesn't match rules as ultimate fallback
       }
-      return defaultConfig // Return even if doesn't match rules as ultimate fallback
+    }
+    
+    // If default doesn't work, try querying (may need index)
+    try {
+      const q = query(
+        collection(db, "footerConfigs"),
+        where("isActive", "==", true),
+        where("isPublished", "==", true)
+      )
+      
+      const snapshot = await getDocs(q)
+      
+      if (!snapshot.empty) {
+        const configs = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) => {
+            const aTime = a.updatedAt?.toDate?.() || new Date(0)
+            const bTime = b.updatedAt?.toDate?.() || new Date(0)
+            return bTime - aTime
+          })
+        
+        // Find the first config that matches display rules for current context
+        const matchingConfig = configs.find(config => 
+          shouldDisplayConfig(config, currentPath, userRole, deviceType)
+        )
+        
+        if (matchingConfig) {
+          return matchingConfig
+        }
+        
+        // Fallback to first active config if no match
+        return configs[0]
+      }
+    } catch (queryError) {
+      console.error("Error querying footer configs (may need index):", queryError)
+      // Fall through to return null
     }
     
     return null
@@ -411,6 +437,8 @@ export const createRevision = async (configType, configId, currentConfig, userId
     const newVersion = (configDoc.data().version || 0) + 1
     
     // Create complete snapshot including content, styling, displayRules, and status
+    // Note: Using new Date() instead of serverTimestamp() because serverTimestamp() 
+    // is not supported inside arrays in Firestore
     const newRevision = {
       version: newVersion,
       content: currentConfig.content,
@@ -418,7 +446,7 @@ export const createRevision = async (configType, configId, currentConfig, userId
       displayRules: currentConfig.displayRules,
       isActive: currentConfig.isActive,
       isPublished: currentConfig.isPublished,
-      updatedAt: serverTimestamp(),
+      updatedAt: new Date(),
       updatedBy: userId,
       notes
     }
