@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { 
   Menu, 
   X, 
@@ -252,23 +252,24 @@ export default function DynamicHeader() {
       </nav>
       
       {/* Mobile Sidebar */}
-      {content?.mobileMenu?.enabled && sidebarOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm lg:hidden"
-          />
-          
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed left-0 top-0 bottom-0 w-full sm:w-80 bg-card border-r border-border z-50 overflow-y-auto shadow-2xl lg:hidden"
-          >
+      <AnimatePresence>
+        {content?.mobileMenu?.enabled && sidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSidebarOpen(false)}
+              className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm lg:hidden"
+            />
+            
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="fixed left-0 top-0 bottom-0 w-full sm:w-80 bg-card border-r border-border z-[60] overflow-y-auto shadow-2xl lg:hidden"
+            >
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
                 <span className={`text-xl font-bold ${content?.logo?.color || 'text-primary'}`}>
@@ -284,20 +285,27 @@ export default function DynamicHeader() {
               </div>
               
               <div className="space-y-1">
-                {visibleNavItems.map((item) => {
-                  const Icon = getIconComponent(item.label)
-                  return (
-                    <Link
-                      key={item.id}
-                      to={item.url}
-                      onClick={() => setSidebarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
-                    >
-                      <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <span className="font-medium group-hover:text-primary transition-colors">{item.label}</span>
-                    </Link>
-                  )
-                })}
+                {visibleNavItems && visibleNavItems.length > 0 ? (
+                  visibleNavItems.map((item) => {
+                    const Icon = getIconComponent(item.label)
+                    return (
+                      <Link
+                        key={item.id}
+                        to={item.url}
+                        onClick={() => setSidebarOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
+                      >
+                        <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <span className="font-medium group-hover:text-primary transition-colors">{item.label}</span>
+                      </Link>
+                    )
+                  })
+                ) : (
+                  <div className="px-4 py-3 text-muted-foreground">
+                    <p>No navigation items available</p>
+                    <p className="text-xs mt-1">Debug: Items count = {visibleNavItems?.length || 0}</p>
+                  </div>
+                )}
               </div>
               
               {currentUser && (
@@ -346,6 +354,7 @@ export default function DynamicHeader() {
           </motion.div>
         </>
       )}
+      </AnimatePresence>
     </header>
   )
 }
