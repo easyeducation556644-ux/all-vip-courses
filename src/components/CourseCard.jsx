@@ -153,27 +153,34 @@ export default function CourseCard({ course, paymentStatus, showButton = false }
           {showButton && (
             <div className="mt-auto pt-3 border-t border-border">
               {hasAccess && course.telegramLink ? (
-                <button
-                  onClick={handleTelegramClick}
-                  disabled={hasClickedTelegram}
-                  className={`w-full py-2.5 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-all ${
-                    hasClickedTelegram
-                      ? 'bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-sm hover:shadow-md'
-                  }`}
-                >
-                  {hasClickedTelegram ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Joined Telegram Group
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      Join Telegram Group
-                    </>
+                <div className="space-y-2">
+                  <button
+                    onClick={handleTelegramClick}
+                    disabled={hasClickedTelegram}
+                    className={`w-full py-2.5 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-all ${
+                      hasClickedTelegram
+                        ? 'bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-sm hover:shadow-md'
+                    }`}
+                  >
+                    {hasClickedTelegram ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Joined Telegram Group
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Join Telegram Group
+                      </>
+                    )}
+                  </button>
+                  {!hasClickedTelegram && (
+                    <p className="text-[10px] leading-tight text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/30 p-2 rounded border border-yellow-200 dark:border-yellow-800">
+                      <span className="font-semibold">Warning:</span> এই লিংকে ক্লিক করলে তোমাকে সরাসরি পেইড চ্যনেলে নিয়ে যাবে, সেখানে জয়েন করে নিবে! এই Button এক বার ক্লিক করলে পরে আর কাজ করবে না! তাই ১ম ক্লিকেই প্রাইভেট চ্যানেলে জয়েন হয়ে যাবে।
+                    </p>
                   )}
-                </button>
+                </div>
               ) : hasPendingPayment ? (
                 <button
                   onClick={handleButtonClick}

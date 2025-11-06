@@ -290,14 +290,6 @@ export default function CourseDetail() {
                       courseName={course.title}
                     />
                   )}
-                  
-                  <button
-                    onClick={handleGoToMyCourses}
-                    className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                    Go to My Courses
-                  </button>
                 </div>
               ) : hasPendingPayment ? (
                 <div className="space-y-4">

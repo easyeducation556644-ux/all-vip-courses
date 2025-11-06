@@ -13,7 +13,7 @@ service cloud.firestore {
     
     function isAdmin() {
       return isSignedIn() && 
-             exists(/databases/$(database)/documents/adminTokens/$(request.auth.uid));
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
     }
     
     function hasRole(role) {
@@ -24,15 +24,19 @@ service cloud.firestore {
     // ===== Users Collection =====
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isOwner(userId) || isAdmin();
+      // Users can create their own profile
+      // Role must be 'user' or empty UNLESS the user is admin@gmail.com
+      allow create: if isSignedIn() && 
+                       request.auth.uid == userId && 
+                       ((!request.resource.data.keys().hasAny(['role']) || request.resource.data.role == 'user') ||
+                        (request.auth.token.email == 'admin@gmail.com' && request.resource.data.role == 'admin'));
+      // Users can update their own profile but NOT the role field
+      // Exception: admin@gmail.com can set their own role to admin
+      allow update: if (isOwner(userId) && 
+                         (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) ||
+                          (request.auth.token.email == 'admin@gmail.com' && request.resource.data.role == 'admin')))
+                       || isAdmin();
       allow delete: if isAdmin();
-    }
-
-    // ===== Admin Tokens Collection =====
-    match /adminTokens/{userId} {
-      allow read: if isSignedIn();
-      allow write: if false; // Only backend can modify
     }
 
     // ===== Courses Collection =====
