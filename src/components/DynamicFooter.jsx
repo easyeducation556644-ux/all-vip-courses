@@ -45,33 +45,33 @@ export default function DynamicFooter() {
     return <Footer />
   }
   
-  const { content, styling } = config
+  const { content } = config
   const currentYear = new Date().getFullYear()
   
   return (
-    <footer className={`${styling.colors.background} ${styling.effects.borderTop ? 'border-t' : ''} ${styling.colors.border} mt-auto`}>
-      <div className={`${styling.layout.maxWidth === 'container' ? 'container' : ''} mx-auto px-${styling.layout.padding.left} py-${styling.layout.padding.top}`}>
-        <div className={`grid grid-cols-1 md:grid-cols-${styling.layout.columns} gap-${styling.layout.gap}`}>
+    <footer className="bg-card border-t border-border/50 mt-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand Section */}
-          {content.brand.enabled && (
+          {content?.brand?.enabled && (
             <div>
-              <h3 className={`${styling.typography.headingFont} ${styling.typography.headingSize} ${styling.colors.headingText} font-bold mb-4`}>
+              <h3 className="text-xl font-bold text-primary mb-4">
                 {content.brand.text}
               </h3>
-              <p className={`${styling.colors.text} ${styling.typography.linkSize}`}>
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 {content.brand.description}
               </p>
             </div>
           )}
           
           {/* Footer Sections */}
-          {content.sections.map((section) => (
+          {content?.sections?.map((section) => (
             <div key={section.id}>
-              <h4 className={`${styling.typography.headingFont} ${styling.typography.headingSize} ${styling.colors.headingText} mb-4`}>
+              <h4 className="font-semibold mb-4 text-foreground">
                 {section.title}
               </h4>
-              <div className="flex flex-col gap-2">
-                {section.links.filter(link => link.isVisible !== false).map((link) => {
+              <div className="flex flex-col gap-3">
+                {section.links?.filter(link => link.isVisible !== false).map((link) => {
                   const IconComponent = link.icon ? iconMap[link.icon] : null
                   
                   if (link.type === 'email') {
@@ -79,10 +79,10 @@ export default function DynamicFooter() {
                       <a
                         key={link.id}
                         href={`mailto:${link.value}`}
-                        className={`${styling.colors.text} ${styling.colors.hoverText} transition-colors ${styling.typography.linkSize} flex items-center gap-2`}
+                        className="text-muted-foreground hover:text-primary transition-colors text-sm flex items-center gap-2"
                       >
-                        {IconComponent && <IconComponent className="w-4 h-4" />}
-                        {link.label || link.value}
+                        {IconComponent && <IconComponent className="w-4 h-4 flex-shrink-0" />}
+                        <span className="break-all">{link.label || link.value}</span>
                       </a>
                     )
                   }
@@ -92,9 +92,9 @@ export default function DynamicFooter() {
                       <a
                         key={link.id}
                         href={`tel:${link.value}`}
-                        className={`${styling.colors.text} ${styling.colors.hoverText} transition-colors ${styling.typography.linkSize} flex items-center gap-2`}
+                        className="text-muted-foreground hover:text-primary transition-colors text-sm flex items-center gap-2"
                       >
-                        {IconComponent && <IconComponent className="w-4 h-4" />}
+                        {IconComponent && <IconComponent className="w-4 h-4 flex-shrink-0" />}
                         {link.label || link.value}
                       </a>
                     )
@@ -107,7 +107,7 @@ export default function DynamicFooter() {
                         href={link.url}
                         target={link.openInNewTab ? "_blank" : undefined}
                         rel={link.openInNewTab ? "noopener noreferrer" : undefined}
-                        className={`${styling.colors.text} ${styling.colors.hoverText} transition-colors ${styling.typography.linkSize}`}
+                        className="text-muted-foreground hover:text-primary transition-colors text-sm"
                       >
                         {link.label}
                       </a>
@@ -118,7 +118,7 @@ export default function DynamicFooter() {
                     <Link
                       key={link.id}
                       to={link.url}
-                      className={`${styling.colors.text} ${styling.colors.hoverText} transition-colors ${styling.typography.linkSize}`}
+                      className="text-muted-foreground hover:text-primary transition-colors text-sm"
                     >
                       {link.label}
                     </Link>
@@ -129,9 +129,9 @@ export default function DynamicFooter() {
           ))}
           
           {/* Social Links */}
-          {content.socialLinks.enabled && content.socialLinks.links.length > 0 && (
+          {content?.socialLinks?.enabled && content?.socialLinks?.links?.length > 0 && (
             <div>
-              <h4 className={`${styling.typography.headingFont} ${styling.typography.headingSize} ${styling.colors.headingText} mb-4`}>
+              <h4 className="font-semibold mb-4 text-foreground">
                 {content.socialLinks.title}
               </h4>
               <div className="flex gap-3">
@@ -144,7 +144,7 @@ export default function DynamicFooter() {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-2 ${styling.colors.hoverText} transition-colors`}
+                      className="p-2 bg-muted hover:bg-primary/20 rounded-lg transition-colors text-muted-foreground hover:text-primary"
                       aria-label={link.platform}
                     >
                       <IconComponent className="w-5 h-5" />
@@ -157,14 +157,14 @@ export default function DynamicFooter() {
         </div>
         
         {/* Copyright Section */}
-        {content.copyright.enabled && (
-          <div className={`mt-8 pt-6 ${styling.effects.borderTop ? 'border-t' : ''} ${styling.colors.border} text-center ${styling.colors.text} ${styling.typography.linkSize}`}>
+        {content?.copyright?.enabled && (
+          <div className="mt-10 pt-8 border-t border-border/50 text-center text-sm text-muted-foreground">
             {content.copyright.text.replace('{year}', currentYear)}
           </div>
         )}
         
         {/* Developer Credit */}
-        <div className={`${content.copyright.enabled ? 'mt-4 pt-4' : 'mt-8 pt-6'} border-t border-border/50`}>
+        <div className={`${content?.copyright?.enabled ? 'mt-6' : 'mt-10 pt-8 border-t border-border/50'}`}>
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
               Developed by{" "}

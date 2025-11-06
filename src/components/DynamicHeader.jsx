@@ -53,24 +53,26 @@ export default function DynamicHeader() {
   
   const { content, styling } = config
   
+  const visibleNavItems = (content.navigation || []).filter(item => item.isVisible)
+  
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
       <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link to={content.logo.link || "/"} className="flex items-center">
-            {content.logo.type === 'image' && content.logo.imageUrl ? (
+          <Link to={content?.logo?.link || "/"} className="flex items-center">
+            {content?.logo?.type === 'image' && content?.logo?.imageUrl ? (
               <img src={content.logo.imageUrl} alt={content.logo.alt || "Logo"} className="h-8 sm:h-10 object-contain" />
             ) : (
               <div className="text-xl sm:text-2xl font-bold text-primary">
-                {content.logo.text || "All Vip Courses"}
+                {content?.logo?.text || "All Vip Courses"}
               </div>
             )}
           </Link>
           
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-2">
-            {content.navigation.filter(item => item.isVisible).map((item) => (
+          <div className="hidden lg:flex items-center gap-2">
+            {visibleNavItems.map((item) => (
               <Link
                 key={item.id}
                 to={item.url}
@@ -81,9 +83,8 @@ export default function DynamicHeader() {
                 {item.label}
               </Link>
             ))}
-          </nav>
+          </div>
 
-          
           {/* Right Section */}
           <div className="flex items-center gap-2">
             {currentUser ? (
@@ -112,7 +113,7 @@ export default function DynamicHeader() {
               </Link>
             )}
             
-            {content.elements.showThemeToggle && (
+            {content?.elements?.showThemeToggle && (
               <button
                 onClick={toggleTheme}
                 className="p-2 hover:bg-accent rounded-lg transition-colors"
@@ -122,7 +123,7 @@ export default function DynamicHeader() {
               </button>
             )}
             
-            {content.mobileMenu.enabled && (
+            {content?.mobileMenu?.enabled && (
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="lg:hidden p-2 hover:bg-accent rounded-lg transition-colors"
@@ -135,97 +136,95 @@ export default function DynamicHeader() {
         </div>
       </nav>
       
-      {/* Mobile Sidebar - Using AnimatePresence for smooth exit */}
-      {content.mobileMenu.enabled && (
+      {/* Mobile Sidebar */}
+      {content?.mobileMenu?.enabled && sidebarOpen && (
         <>
-          {sidebarOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSidebarOpen(false)}
-                className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm lg:hidden"
-              />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm lg:hidden"
+          />
+          
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed left-0 top-0 bottom-0 w-full sm:w-80 bg-card border-r border-border z-50 overflow-y-auto shadow-2xl lg:hidden"
+          >
+            <div className="p-4 space-y-4">
+              <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
+                <span className="text-xl font-bold text-primary">
+                  {content?.logo?.text || "Menu"}
+                </span>
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="p-2 hover:bg-muted rounded-lg transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
               
-              <motion.div
-                initial={{ x: "-100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="fixed left-0 top-0 bottom-0 w-full sm:w-80 bg-card border-r border-border z-50 overflow-y-auto shadow-2xl lg:hidden"
-              >
-                <div className="p-4 space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xl font-bold text-primary">
-                      Menu
-                    </span>
-                    <button
-                      onClick={() => setSidebarOpen(false)}
-                      className="p-2 hover:bg-muted rounded-lg transition-colors"
-                      aria-label="Close menu"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                  
-                  {content.navigation.filter(item => item.isVisible).map((item) => (
-                    <Link
-                      key={item.id}
-                      to={item.url}
-                      onClick={() => setSidebarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
-                    >
-                      <span className="font-medium group-hover:text-primary transition-colors">{item.label}</span>
-                    </Link>
-                  ))}
-                  
-                  {currentUser && (
-                    <div className="border-t border-border pt-4 space-y-1">
-                      <Link
-                        to={isAdmin ? "/admin" : "/dashboard"}
-                        onClick={() => setSidebarOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
-                      >
-                        <LayoutDashboard className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                        <span className="font-medium group-hover:text-primary transition-colors">Dashboard</span>
-                      </Link>
-                      <Link
-                        to="/profile"
-                        onClick={() => setSidebarOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
-                      >
-                        <User className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                        <span className="font-medium group-hover:text-primary transition-colors">Profile</span>
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setSidebarOpen(false)
-                          handleSignOut()
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors group"
-                      >
-                        <LogOut className="w-5 h-5" />
-                        <span className="font-medium">Sign Out</span>
-                      </button>
-                    </div>
-                  )}
-                  
-                  {!currentUser && (
-                    <div className="border-t border-border pt-4">
-                      <Link
-                        to="/login"
-                        onClick={() => setSidebarOpen(false)}
-                        className="block w-full px-4 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-center font-medium transition-colors"
-                      >
-                        Login
-                      </Link>
-                    </div>
-                  )}
+              <div className="space-y-1">
+                {visibleNavItems.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={item.url}
+                    onClick={() => setSidebarOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
+                  >
+                    <span className="font-medium group-hover:text-primary transition-colors">{item.label}</span>
+                  </Link>
+                ))}
+              </div>
+              
+              {currentUser && (
+                <div className="border-t border-border pt-4 space-y-1">
+                  <Link
+                    to={isAdmin ? "/admin" : "/dashboard"}
+                    onClick={() => setSidebarOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
+                  >
+                    <LayoutDashboard className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="font-medium group-hover:text-primary transition-colors">Dashboard</span>
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => setSidebarOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group"
+                  >
+                    <User className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="font-medium group-hover:text-primary transition-colors">Profile</span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setSidebarOpen(false)
+                      handleSignOut()
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors group"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium">Sign Out</span>
+                  </button>
                 </div>
-              </motion.div>
-            </>
-          )}
+              )}
+              
+              {!currentUser && (
+                <div className="border-t border-border pt-4">
+                  <Link
+                    to="/login"
+                    onClick={() => setSidebarOpen(false)}
+                    className="block w-full px-4 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-center font-medium transition-colors"
+                  >
+                    Login
+                  </Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
         </>
       )}
     </header>
