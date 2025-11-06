@@ -681,4 +681,69 @@ export default function Header() {
                       {deferredPrompt ? (
                         <button
                           onClick={handleInstallConfirm}
-                          className="w-full py-3 px-4 bg-gradient-
+                          className="w-full py-3 px-4 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white rounded-lg transition-all font-medium flex items-center justify-center gap-2 text-sm shadow-lg hover:shadow-xl"
+                        >
+                          <Download className="w-4 h-4" />
+                          এখনই Install করুন
+                        </button>
+                      ) : (
+                        <>
+                          {window.self !== window.top && (
+                            <button
+                              onClick={handleOpenInNewTab}
+                              className="w-full py-3 px-4 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white rounded-lg transition-all font-medium flex items-center justify-center gap-2 text-sm shadow-lg hover:shadow-xl"
+                            >
+                              <Download className="w-4 h-4" />
+                              নতুন Tab এ খুলুন
+                            </button>
+                          )}
+                          <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg space-y-3">
+                            <p className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                              📱 Android Phone এ App Install করার নিয়ম:
+                            </p>
+                            <ol className="text-sm space-y-2.5 text-foreground">
+                              <li className="flex items-start gap-3">
+                                <span className="font-bold text-blue-600 dark:text-blue-400 text-base flex-shrink-0">১.</span>
+                                <span>Browser এর উপরে ডান কোণায় <strong className="text-blue-600 dark:text-blue-400">তিন বিন্দু (⋮)</strong> বা <strong className="text-blue-600 dark:text-blue-400">তিন লাইন (≡)</strong> মেনুতে ক্লিক করুন</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="font-bold text-blue-600 dark:text-blue-400 text-base flex-shrink-0">২.</span>
+                                <div className="flex-1">
+                                  <p><strong className="text-blue-600 dark:text-blue-400">"Add to Home Screen"</strong> অপশন খুঁজুন</p>
+                                  <p className="text-xs mt-1 text-muted-foreground">(Chrome: "Install App" / "Add to Home Screen")</p>
+                                  <p className="text-xs text-muted-foreground">(Firefox: "Install" / "Add to Home Screen")</p>
+                                </div>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <span className="font-bold text-blue-600 dark:text-blue-400 text-base flex-shrink-0">৩.</span>
+                                <span>পপআপে <strong className="text-blue-600 dark:text-blue-400">"Install"</strong> বা <strong className="text-blue-600 dark:text-blue-400">"Add"</strong> বাটনে ক্লিক করুন</span>
+                              </li>
+                            </ol>
+                            <div className="pt-2 border-t border-blue-500/20 space-y-1">
+                              <p className="text-xs text-blue-600 dark:text-blue-400">
+                                ✅ সফলভাবে install হলে আপনার Home Screen এ App icon দেখতে পাবেন
+                              </p>
+                              <p className="text-xs text-blue-600 dark:text-blue-400">
+                                💡 <strong>Best Browser:</strong> Chrome, Edge, বা Samsung Internet
+                              </p>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      <button
+                        onClick={handleInstallDismiss}
+                        className="w-full py-2.5 px-4 bg-muted/50 hover:bg-muted text-foreground rounded-lg transition-colors font-medium text-sm"
+                      >
+                        পরে করব
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
