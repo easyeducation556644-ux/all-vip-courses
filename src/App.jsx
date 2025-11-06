@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import { ThemeProvider } from "./contexts/ThemeContext"
 import { Toaster } from "./components/ui/toaster"
-import Header from "./components/Header"
-import Footer from "./components/Footer"
+import DynamicHeader from "./components/DynamicHeader"
+import DynamicFooter from "./components/DynamicFooter"
 import ProtectedRoute from "./components/ProtectedRoute"
 import PWAInstallPrompt from "./components/PWAInstallPrompt"
 import SettingsLoader from "./components/SettingsLoader"
@@ -35,7 +35,7 @@ function App() {
         <AuthProvider>
           <SettingsLoader />
           <div className="flex flex-col min-h-screen bg-background text-foreground">
-            <Header />
+            <DynamicHeader />
             <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -91,7 +91,7 @@ function App() {
             </main>
             <PWAInstallPrompt />
             <Toaster />
-            <Footer />
+            <DynamicFooter />
           </div>
         </AuthProvider>
       </ThemeProvider>

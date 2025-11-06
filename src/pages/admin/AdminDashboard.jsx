@@ -10,6 +10,7 @@ import {
   X,
   FolderTree,
   BarChart3,
+  Layout,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { collection, query, where, onSnapshot } from "firebase/firestore"
@@ -19,6 +20,7 @@ import ManageCourses from "./ManageCourses"
 import ManagePayments from "./ManagePayments"
 import ManageCategories from "./ManageCategories"
 import Overview from "./Overview"
+import HeaderFooterBuilder from "./HeaderFooterBuilder"
 
 export default function AdminDashboard() {
   const location = useLocation()
@@ -46,6 +48,7 @@ export default function AdminDashboard() {
     { name: "Categories", path: "/admin/categories", icon: FolderTree },
     { name: "Courses", path: "/admin/courses", icon: BookOpen },
     { name: "Payments", path: "/admin/payments", icon: CreditCard, badge: pendingPaymentsCount },
+    { name: "Header & Footer", path: "/admin/header-footer", icon: Layout },
   ]
 
   const currentPage = navItems.find((item) => item.path === location.pathname)?.name || "Overview"
@@ -167,6 +170,7 @@ export default function AdminDashboard() {
               <Route path="categories" element={<ManageCategories />} />
               <Route path="courses" element={<ManageCourses />} />
               <Route path="payments" element={<ManagePayments />} />
+              <Route path="header-footer" element={<HeaderFooterBuilder />} />
             </Routes>
           </div>
         </div>
